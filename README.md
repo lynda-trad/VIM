@@ -1,7 +1,7 @@
 
 Projet 2019 - Clone de vim
 
-source : clone.c 
+Source : clone.c 
 executable : clone
 
 Membres du groupe :
