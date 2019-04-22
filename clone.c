@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     static struct termios oldt, newt;
     tcgetattr( STDIN_FILENO, &oldt);
     newt = oldt;
-    newt.c_lflag &= ~(ICANON);
+    cfmakeraw(&newt);
     tcsetattr( STDIN_FILENO, TCSANOW, &newt);
 
     //opens vim with a filename
@@ -98,5 +98,10 @@ int main(int argc, char **argv)
     }
     */
 
+    //at the end, it goes back to canonic mode
+    tcsetattr( STDIN_FILENO, TCSANOW, &oldt);
     exit(EXIT_SUCCESS);
 }
+
+
+//xterm -geometry 80x24 -e /chemin/vers/programme
