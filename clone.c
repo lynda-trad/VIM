@@ -19,7 +19,7 @@
 
 static void handler()
 {
-    //ignores the signals CTRL+C
+    //ignores the signal CTRL+C
 }
 
 enum mode_t
@@ -41,7 +41,60 @@ void change_mode(unsigned char c, struct mode_s *m)
         m->type = NORMAL;
 }
 
-int main(int argc, char **argv)
+
+int parse_line(char *s, char **argv[])
+{ // parses the line s
+    unsigned int i;
+    unsigned int len;
+    unsigned int wordl;
+
+    char **tmp;
+    char *debw;
+
+    i = 0;
+    len = 0;
+    tmp = malloc(sizeof(char*) * 1);
+
+    while(s[i] && s[i] != '\n')
+    {
+        while (s[i] == ' ')
+        {
+            ++i;
+        }
+
+        debw = &s[i];
+        wordl = 0;
+
+        while(s[i] && s[i] != ' ' && s[i] != '\n')
+        {
+            ++wordl;
+            ++i;
+        }
+
+        if(wordl)
+        {
+            tmp[len] = malloc(sizeof(char) * wordl + 1);
+
+            memcpy(tmp[len], debw, wordl);
+
+            tmp[len][wordl]= '\0';
+
+            ++len;
+
+            tmp = realloc(tmp, sizeof(char*) * (len + 1));
+        }
+    }
+
+    tmp[len] = NULL;
+    argv[0] = tmp;
+
+    return len;
+}
+
+
+
+
+    int main(int argc, char **argv)
 {
     //ignores CTRL+C
     struct sigaction act;
@@ -76,6 +129,9 @@ int main(int argc, char **argv)
         int n;
         while( (n = read(fd, buffer, 1024)) )
             write(STDOUT_FILENO, buffer, n);
+
+        free(buffer);
+        close(fd);
     }
 
     //start of vim, mode not defined
@@ -93,13 +149,66 @@ int main(int argc, char **argv)
     if(current_mode.type == 1)
         printf("\nNormal mode\n");
 
-    /*
-    while(1)
+
+    //while(1)
+    //{
+        //change_mode(fgetc(stdin),&current_mode);
+
+    if(current_mode.type == 0)
     {
-        change_mode(fgetc(stdin),&current_mode);
-        //utilisation du clone de vim
+        //write from STDIN_FILENO
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+        exit(EXIT_SUCCESS);
     }
-    */
+    else
+        if(current_mode.type == 1)
+        {
+            tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+            char c;
+            if(read(STDIN_FILENO, &c, 1) == ':')
+            {
+                char *s = malloc(sizeof(char)* 100);
+                int n;
+
+                while( (n = read(STDIN_FILENO, s, 100)))
+                    write(STDOUT_FILENO, s, n);
+
+                char **tab;
+                parse_line(s, &tab);
+
+                if(!strcmp(argv[0],"q"))
+                {
+                    free(tab);
+                    free(s);
+                    fflush(STDIN_FILENO);
+                    exit(EXIT_SUCCESS);
+                }
+
+                if(!strcmp(argv[0],"w") && !argv[1])
+                if(argc > 1)
+                {
+                    //enregistre modifs dans filename qu'on avait ouvert auparavant
+                    free(s);
+                    free(tab);
+                    exit(EXIT_SUCCESS);
+                }
+
+                if(!strcmp(argv[0],"w") && argv[1])
+                {
+                    //enregistre ce qu'on a ecrit dans fichier (argv[1])
+                    free(s);
+                    free(tab);
+                    exit(EXIT_SUCCESS);
+                }
+
+                free(s);
+                free(tab);
+                tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+                exit(EXIT_SUCCESS);
+            }
+        }
+//    }
+
 
     //at the end, it goes back to canonic mode
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
