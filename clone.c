@@ -53,7 +53,10 @@ int main(int argc, char **argv)
     static struct termios oldt, newt;
     tcgetattr( STDIN_FILENO, &oldt);
     newt = oldt;
-    cfmakeraw(&newt);
+    //cfmakeraw(&newt); //decallage etrange
+    newt.c_lflag &= ~(ICANON);
+    newt.c_lflag &= ~ECHO;
+
     tcsetattr( STDIN_FILENO, TCSANOW, &newt);
 
     //opens vim with a filename
@@ -67,17 +70,17 @@ int main(int argc, char **argv)
             fprintf(stderr,"can not open file");
             exit(EXIT_FAILURE);
         }
-        char *s = malloc(1024 * sizeof(char));
+        char *buffer = malloc(1024 * sizeof(char));
 
         //prints the file, not able to change it yet
         int n;
-        while( (n = read(fd, s, 1024)) )
-            write(STDOUT_FILENO,s,n);
+        while( (n = read(fd, buffer, 1024)) )
+            write(STDOUT_FILENO, buffer, n);
     }
 
     //start of vim, mode not defined
     struct mode_s current_mode;
-    printf("Press i to enter Insert mode.\nPress ESCAPE to enter Normal mode.\n");
+    printf("Press i to enter Insert mode. Press ESCAPE to enter Normal mode.\n");
     unsigned char c;
     scanf("%c",&c);
 
@@ -85,10 +88,10 @@ int main(int argc, char **argv)
 
     //checking
     if(current_mode.type == 0)
-        printf("Insert mode\n");
+        printf("\nInsert mode\n");
     else
     if(current_mode.type == 1)
-        printf("Normal mode\n");
+        printf("\nNormal mode\n");
 
     /*
     while(1)
@@ -99,9 +102,10 @@ int main(int argc, char **argv)
     */
 
     //at the end, it goes back to canonic mode
-    tcsetattr( STDIN_FILENO, TCSANOW, &oldt);
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     exit(EXIT_SUCCESS);
 }
 
 
-//xterm -geometry 80x24 -e /chemin/vers/programme
+// xterm -geometry 80x24 -e /chemin/vers/programme
+// sprintf(buffer, "\x1b[%d;%dH",x ,y); pour deplacer le curseur a la position x y
