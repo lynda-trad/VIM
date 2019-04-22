@@ -9,6 +9,19 @@
 #include <termios.h>
 #include <unistd.h>
 
+#include <signal.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+#include <unistd.h>
+
+static void handler()
+{
+    //ignores the signals CTRL+C
+}
+
 enum mode_t
 {
     INSERT ,
@@ -28,16 +41,41 @@ void change_mode(unsigned char c, struct mode_s *m)
         m->type = NORMAL;
 }
 
-int main()
+int main(int argc, char **argv)
 {
-    //passe en mode non canonique
+    //ignores CTRL+C
+    struct sigaction act;
+    act.sa_handler = &handler;
+    act.sa_flags = SA_RESTART;
+    sigaction(SIGINT, &act, NULL);
+
+    //non canonic mode
     static struct termios oldt, newt;
     tcgetattr( STDIN_FILENO, &oldt);
     newt = oldt;
     newt.c_lflag &= ~(ICANON);
     tcsetattr( STDIN_FILENO, TCSANOW, &newt);
 
-    //debut de vim pas de mode défini
+    //opens vim with a filename
+    if(argc > 1)
+    {
+        int fd;
+        fd = open(argv[1],O_RDONLY);
+
+        if (fd < 0)
+        {
+            fprintf(stderr,"can not open file");
+            exit(EXIT_FAILURE);
+        }
+        char *s = malloc(1024 * sizeof(char));
+
+        //prints the file, not able to change it yet
+        int n;
+        while( (n = read(fd, s, 1024)) )
+            write(STDOUT_FILENO,s,n);
+    }
+
+    //start of vim, mode not defined
     struct mode_s current_mode;
     printf("Press i to enter Insert mode.\nPress ESCAPE to enter Normal mode.\n");
     unsigned char c;
@@ -45,7 +83,7 @@ int main()
 
     change_mode(c, &current_mode);
 
-    //verif
+    //checking
     if(current_mode.type == 0)
         printf("Insert mode\n");
     else
