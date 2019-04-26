@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <ctype.h>
+
 #include <termios.h>
 #include <unistd.h>
 
@@ -17,9 +19,53 @@
 
 #include <unistd.h>
 
+struct termios old_t;
+
+void die(const char *s)
+{
+    //error handler
+    perror(s);
+    exit(1);
+}
+
 static void handler()
 {
     //ignores the signal CTRL+C
+}
+
+void disableRawMode()
+{
+    //disables raw mode
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &old_t) == -1)
+        die("tcsetattr failed : disableRawMode()");
+}
+
+void enableRawMode()
+{
+    //enables raw mode
+    tcgetattr(STDIN_FILENO, &old_t);
+    atexit(disableRawMode);
+
+    struct termios new_t = old_t;
+
+    new_t.c_lflag &= ~(ICANON);
+    new_t.c_lflag &= ~(ECHO);
+
+    // disables CTRL+S and CTRL+Q
+    new_t.c_iflag &= ~(IXON);
+
+    // disables CTRL+M
+    new_t.c_iflag &= ~(ICRNL);
+
+    // disables CTRL+V
+    new_t.c_iflag &= ~(IEXTEN);
+
+    //other flags
+    new_t.c_iflag &= ~(BRKINT | INPCK | ISTRIP);
+    new_t.c_cflag |= (CS8);
+
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &new_t) == -1)
+        die("tcsetattr failed : enableRawMode()");
 }
 
 enum mode_t
@@ -35,6 +81,7 @@ struct mode_s
 
 void change_mode(unsigned char c, struct mode_s *m)
 {
+    //goes from Insertion mode to Normal mode or vice versa
     if(c == 105)
         m->type = INSERT;
     else if(c == 27)
@@ -43,7 +90,8 @@ void change_mode(unsigned char c, struct mode_s *m)
 
 
 int parse_line(char *s, char **argv[])
-{ // parses the line s
+{
+    // parses the line s
     unsigned int i;
     unsigned int len;
     unsigned int wordl;
@@ -93,8 +141,7 @@ int parse_line(char *s, char **argv[])
 
 
 
-
-    int main(int argc, char **argv)
+int main(int argc, char **argv)
 {
     //ignores CTRL+C
     struct sigaction act;
@@ -103,36 +150,7 @@ int parse_line(char *s, char **argv[])
     sigaction(SIGINT, &act, NULL);
 
     //non canonic mode
-    static struct termios oldt, newt;
-    tcgetattr( STDIN_FILENO, &oldt);
-    newt = oldt;
-    //cfmakeraw(&newt); //decallage etrange
-    newt.c_lflag &= ~(ICANON);
-    newt.c_lflag &= ~ECHO;
-
-    tcsetattr( STDIN_FILENO, TCSANOW, &newt);
-
-    //opens vim with a filename
-    if(argc > 1)
-    {
-        int fd;
-        fd = open(argv[1],O_RDONLY);
-
-        if (fd < 0)
-        {
-            fprintf(stderr,"can not open file");
-            exit(EXIT_FAILURE);
-        }
-        char *buffer = malloc(1024 * sizeof(char));
-
-        //prints the file, not able to change it yet
-        int n;
-        while( (n = read(fd, buffer, 1024)) )
-            write(STDOUT_FILENO, buffer, n);
-
-        free(buffer);
-        close(fd);
-    }
+    enableRawMode();
 
     //start of vim, mode not defined
     struct mode_s current_mode;
@@ -149,21 +167,14 @@ int parse_line(char *s, char **argv[])
     if(current_mode.type == 1)
         printf("\nNormal mode\n");
 
-
-    //while(1)
-    //{
-        //change_mode(fgetc(stdin),&current_mode);
-
     if(current_mode.type == 0)
     {
         //write from STDIN_FILENO
-        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
         exit(EXIT_SUCCESS);
     }
     else
         if(current_mode.type == 1)
         {
-            tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
             char c;
             if(read(STDIN_FILENO, &c, 1) == ':')
             {
@@ -203,18 +214,10 @@ int parse_line(char *s, char **argv[])
 
                 free(s);
                 free(tab);
-                tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
                 exit(EXIT_SUCCESS);
             }
         }
-//    }
 
-
-    //at the end, it goes back to canonic mode
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    disableRawMode();
     exit(EXIT_SUCCESS);
 }
-
-
-// xterm -geometry 80x24 -e /chemin/vers/programme
-// sprintf(buffer, "\x1b[%d;%dH",x ,y); pour deplacer le curseur a la position x y
