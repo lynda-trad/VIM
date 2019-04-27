@@ -148,7 +148,10 @@ int main(int argc, char **argv)
             close(fd);
         }
         else
-        editorDrawRows();
+        {
+            editorDrawRows();
+            moveCursor(read(STDIN_FILENO, &c, 1));
+        }
     }
     else
         if(current_mode.type == 1)

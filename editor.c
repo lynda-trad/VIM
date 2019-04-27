@@ -13,6 +13,25 @@
 #define WIN_X 80
 #define WIN_Y 24
 
+void moveCursor(unsigned char c)
+{
+    switch(c)
+    {
+        case 75:
+            printf("left\n");
+            break;
+        case 77:
+            printf("right\n");
+            break;
+        case 72:
+            printf("up\n");
+            break;
+        case 80:
+            printf("down\n");
+            break;
+    }
+}
+
 struct termios old_t;
 
 void die(const char *s)
