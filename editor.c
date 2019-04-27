@@ -56,6 +56,11 @@ void enableRawMode()
 
 void clear_term()
 {
-    //printf("\033[H\033[2J"); //real clear
+    //2 options
+    printf("\033[H\033[2J");
+
+    /*
     write(STDOUT_FILENO, "\x1b[2J", 4);
+    write(STDOUT_FILENO, "\x1b[H", 3);
+    */
 }
