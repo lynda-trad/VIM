@@ -8,7 +8,6 @@
 
 #include <ctype.h>
 
-#include <termios.h>
 #include <unistd.h>
 
 #include <signal.h>
@@ -17,55 +16,11 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include <unistd.h>
-
-struct termios old_t;
-
-void die(const char *s)
-{
-    //error handler
-    perror(s);
-    exit(1);
-}
+#include "editor.h"
 
 static void handler()
 {
     //ignores the signal CTRL+C
-}
-
-void disableRawMode()
-{
-    //disables raw mode
-    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &old_t) == -1)
-        die("tcsetattr failed : disableRawMode()");
-}
-
-void enableRawMode()
-{
-    //enables raw mode
-    tcgetattr(STDIN_FILENO, &old_t);
-    atexit(disableRawMode);
-
-    struct termios new_t = old_t;
-
-    new_t.c_lflag &= ~(ICANON);
-    new_t.c_lflag &= ~(ECHO);
-
-    // disables CTRL+S and CTRL+Q
-    new_t.c_iflag &= ~(IXON);
-
-    // disables CTRL+M
-    new_t.c_iflag &= ~(ICRNL);
-
-    // disables CTRL+V
-    new_t.c_iflag &= ~(IEXTEN);
-
-    //other flags
-    new_t.c_iflag &= ~(BRKINT | INPCK | ISTRIP);
-    new_t.c_cflag |= (CS8);
-
-    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &new_t) == -1)
-        die("tcsetattr failed : enableRawMode()");
 }
 
 enum mode_t
@@ -87,7 +42,6 @@ void change_mode(unsigned char c, struct mode_s *m)
     else if(c == 27)
         m->type = NORMAL;
 }
-
 
 int parse_line(char *s, char **argv[])
 {
@@ -140,7 +94,6 @@ int parse_line(char *s, char **argv[])
 }
 
 
-
 int main(int argc, char **argv)
 {
     //ignores CTRL+C
@@ -170,6 +123,7 @@ int main(int argc, char **argv)
     if(current_mode.type == 0)
     {
         //write from STDIN_FILENO
+        clear_term();
         exit(EXIT_SUCCESS);
     }
     else
@@ -214,10 +168,12 @@ int main(int argc, char **argv)
 
                 free(s);
                 free(tab);
-                exit(EXIT_SUCCESS);
             }
+            clear_term();
+            exit(EXIT_SUCCESS);
         }
 
     disableRawMode();
+    clear_term();
     exit(EXIT_SUCCESS);
 }

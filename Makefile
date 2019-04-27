@@ -1,5 +1,5 @@
 EXEC=clone
-SOURCES=clone.c
+SOURCES=clone.c editor.c
 OBJECTS=$(SOURCES:.c=.o)
 CC=gcc
 CFLAGS=-W -Wall -Werror -std=gnu99 -g
@@ -9,16 +9,15 @@ LFLAGS=-lm
  
 default: $(EXEC)
  
- 
+
+editor.o : editor.c editor.h
+clone.o : clone.c editor.h
+
 %.o: %.c
 	$(CC) -o $@ -c $< $(CFLAGS)
  
 $(EXEC): $(OBJECTS)
 	$(CC) -o $@ $^ $(LFLAGS)
- 
- 
-clone.exe :
-	$(CC) $(CFLAGS) clone.c -o clone.exe
- 
+
 clean:
 	rm -rf $(EXEC) $(OBJECTS) $(SOURCES:.c=.c~) $(SOURCES:.c=.h~) Makefile~
