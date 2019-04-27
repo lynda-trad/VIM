@@ -15,4 +15,6 @@ void enableRawMode();
 
 void clear_term();
 
+void editorDrawRows();
+
 #endif //CLONE_EDITOR_H

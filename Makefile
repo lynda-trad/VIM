@@ -2,13 +2,13 @@ EXEC=clone
 SOURCES=clone.c editor.c
 OBJECTS=$(SOURCES:.c=.o)
 CC=gcc
+
 CFLAGS=-W -Wall -Werror -std=gnu99 -g
 LFLAGS=-lm
  
 .PHONY: default clean
  
 default: $(EXEC)
- 
 
 editor.o : editor.c editor.h
 clone.o : clone.c editor.h

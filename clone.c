@@ -37,10 +37,15 @@ struct mode_s
 void change_mode(unsigned char c, struct mode_s *m)
 {
     //goes from Insertion mode to Normal mode or vice versa
-    if(c == 105)
-        m->type = INSERT;
-    else if(c == 27)
-        m->type = NORMAL;
+    switch(c)
+    {
+        case 105 :
+            m->type = INSERT;
+            break;
+        case 27 :
+            m->type = NORMAL;
+            break;
+    }
 }
 
 int parse_line(char *s, char **argv[])
@@ -93,7 +98,6 @@ int parse_line(char *s, char **argv[])
     return len;
 }
 
-
 int main(int argc, char **argv)
 {
     //ignores CTRL+C
@@ -107,10 +111,10 @@ int main(int argc, char **argv)
 
     //start of vim, mode not defined
     struct mode_s current_mode;
-    printf("Press i to enter Insert mode. Press ESCAPE to enter Normal mode.\n");
-    unsigned char c;
-    scanf("%c",&c);
 
+    printf("Press i to enter Insertion mode. Press ESCAPE to enter Normal mode.\n");
+    unsigned char c;
+    while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!=27 );
     change_mode(c, &current_mode);
 
     //checking
@@ -123,8 +127,28 @@ int main(int argc, char **argv)
     if(current_mode.type == 0)
     {
         //write from STDIN_FILENO
-        clear_term();
-        exit(EXIT_SUCCESS);
+        if(argc > 1)
+        {
+            int fd;
+            fd = open(argv[1],O_RDONLY);
+
+            if (fd < 0)
+            {
+                fprintf(stderr,"can not open file");
+                exit(EXIT_FAILURE);
+            }
+            char *buffer = malloc(1024 * sizeof(char));
+
+            //prints the file, not able to change it yet
+            int n;
+            while( (n = read(fd, buffer, 1024)) )
+                write(STDOUT_FILENO, buffer, n);
+
+            free(buffer);
+            close(fd);
+        }
+        else
+        editorDrawRows();
     }
     else
         if(current_mode.type == 1)
@@ -169,11 +193,9 @@ int main(int argc, char **argv)
                 free(s);
                 free(tab);
             }
-            clear_term();
-            exit(EXIT_SUCCESS);
         }
 
     disableRawMode();
-    clear_term();
+    // clear_term();
     exit(EXIT_SUCCESS);
 }

@@ -10,11 +10,15 @@
 
 #include "editor.h"
 
+#define WIN_X 80
+#define WIN_Y 24
+
 struct termios old_t;
 
 void die(const char *s)
 {
     //error handler
+    clear_term();
     perror(s);
     exit(1);
 }
@@ -63,4 +67,14 @@ void clear_term()
     write(STDOUT_FILENO, "\x1b[2J", 4);
     write(STDOUT_FILENO, "\x1b[H", 3);
     */
+}
+
+void editorDrawRows()
+{
+    //draws the line of tildes like vim
+    int y;
+
+    for (y = 0; y < WIN_Y; y++) {
+        write(STDOUT_FILENO, "~\r\n", 3);
+    }
 }

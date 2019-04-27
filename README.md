@@ -17,3 +17,4 @@ Lynda :
 - changement du mode Insertion au mode Normal
 - parsing de la commande en mode Normal
 - fonction pour clear le terminal
+- fonction pour print les lignes de tildes comme dans vim
