@@ -10,6 +10,8 @@
 #define WIN_X 90
 #define WIN_Y 40
 
+#define CTRL_KEY(k) ((k) & 0x1f)
+
 void die(const char *s);
 
 void disableRawMode();

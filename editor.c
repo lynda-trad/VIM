@@ -19,17 +19,17 @@ void moveCursor(unsigned char c)
 {
     switch(c)
     {
-        case 75:
-            printf("left\n");
-            break;
-        case 77:
-            printf("right\n");
-            break;
-        case 72:
+        case 'A':
             printf("up\n");
             break;
-        case 80:
+        case 'B':
             printf("down\n");
+            break;
+        case 'C':
+            printf("left\n");
+            break;
+        case 'D':
+            printf("right\n");
             break;
     }
 }

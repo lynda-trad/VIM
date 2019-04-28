@@ -21,8 +21,6 @@
 #include "clone.h"
 #include "editor.h"
 
-#define CTRL_KEY(k) ((k) & 0x1f)
-
 struct mode_s current_mode;
 
 enum mode_t
@@ -158,8 +156,8 @@ int main(int argc, char **argv)
 
     printf("Press i to enter Insertion mode. Press ESCAPE to enter Normal mode.\n");
     unsigned char c;
-    while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!=27 );
-    change_mode(c, &current_mode);
+    keyPressed(&current_mode);
+    //change_mode(c, &current_mode);
 
     //checking
     if(current_mode.type == 0)
@@ -199,7 +197,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            //clear_term();
+            clear_term();
             editorDrawRows();
             write(STDOUT_FILENO, "\x1b[H", 3);
             moveCursor(read(STDIN_FILENO, &c, 1));
@@ -220,7 +218,7 @@ int main(int argc, char **argv)
             char **tab;
             parse_line(s, &tab);
 
-            if (!strcmp(tab[0], "q"))
+            if (!strcmp(tab[0], ":q"))
             {
                 free(tab);
                 free(s);
