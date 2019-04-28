@@ -13,6 +13,8 @@
 
 #include "editor.h"
 
+struct termios old_t;
+
 void moveCursor(unsigned char c)
 {
     switch(c)
@@ -31,8 +33,6 @@ void moveCursor(unsigned char c)
             break;
     }
 }
-
-struct termios old_t;
 
 void die(const char *s)
 {
@@ -96,4 +96,5 @@ void editorDrawRows()
     for (y = 0; y < WIN_Y; y++) {
         write(STDOUT_FILENO, "~\r\n", 3);
     }
+    write(STDOUT_FILENO, "\x1b[H", 3);
 }

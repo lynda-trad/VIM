@@ -23,10 +23,7 @@
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
-static void handler()
-{
-    //ignores the signal CTRL+C
-}
+struct mode_s current_mode;
 
 enum mode_t
 {
@@ -38,6 +35,11 @@ struct mode_s
 {
     mode_t type;
 };
+
+static void handler()
+{
+    //ignores the signal CTRL+C
+}
 
 char readKey()
 {
@@ -66,17 +68,12 @@ void keyPressed(struct mode_s *m)
         printf("%d ('%c')\r\n", c, c);
     }
 
-
     switch (c)
     {
         case 105 :
-            m->type = INSERT;
-            break;
         case 27 :
-            m->type = NORMAL;
+            change_mode(c, m);
             break;
-        case CTRL_KEY('z'):
-            exit(EXIT_SUCCESS);
     }
 }
 
@@ -158,9 +155,6 @@ int main(int argc, char **argv)
     //non canonic mode
     enableRawMode();
 
-    //start of vim, mode not defined
-    struct mode_s current_mode;
-
     printf("Press i to enter Insertion mode. Press ESCAPE to enter Normal mode.\n");
     unsigned char c;
     while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!=27 );
@@ -184,6 +178,7 @@ int main(int argc, char **argv)
         //write from STDIN_FILENO
         if(argc > 1)
         {
+            editorDrawRows();
             int fd;
             fd = open(argv[1],O_RDONLY);
 

@@ -11,7 +11,7 @@ LFLAGS=-lm
 default: $(EXEC)
 
 editor.o : editor.c editor.h
-clone.o : clone.c editor.h
+clone.o : clone.c clone.h editor.h
 
 %.o: %.c
 	$(CC) -o $@ -c $< $(CFLAGS)
