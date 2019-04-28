@@ -7,6 +7,9 @@
 
 #include <termios.h>
 
+#define WIN_X 90
+#define WIN_Y 40
+
 void die(const char *s);
 
 void disableRawMode();

@@ -8,10 +8,10 @@
 
 #include <unistd.h>
 
-#include "editor.h"
+//window
+#include <sys/ioctl.h>
 
-#define WIN_X 80
-#define WIN_Y 24
+#include "editor.h"
 
 void moveCursor(unsigned char c)
 {

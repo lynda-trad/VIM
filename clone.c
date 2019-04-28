@@ -16,7 +16,12 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include <errno.h>
+
+#include "clone.h"
 #include "editor.h"
+
+#define CTRL_KEY(k) ((k) & 0x1f)
 
 static void handler()
 {
@@ -33,6 +38,47 @@ struct mode_s
 {
     mode_t type;
 };
+
+char readKey()
+{
+    int n;
+    char c;
+
+    while ( (n = read(STDIN_FILENO, &c, 1) ) != 1)
+    {
+        if (n == -1 && errno != EAGAIN)
+            die("read failed");
+    }
+
+    return c;
+}
+
+void keyPressed(struct mode_s *m)
+{
+    char c = readKey();
+
+    if (iscntrl(c))
+    {
+        printf("%d\r\n", c);
+    }
+    else
+    {
+        printf("%d ('%c')\r\n", c, c);
+    }
+
+
+    switch (c)
+    {
+        case 105 :
+            m->type = INSERT;
+            break;
+        case 27 :
+            m->type = NORMAL;
+            break;
+        case CTRL_KEY('z'):
+            exit(EXIT_SUCCESS);
+    }
+}
 
 void change_mode(unsigned char c, struct mode_s *m)
 {
@@ -100,6 +146,9 @@ int parse_line(char *s, char **argv[])
 
 int main(int argc, char **argv)
 {
+    //windows resize
+    //xterm -geometry 90x40
+
     //ignores CTRL+C
     struct sigaction act;
     act.sa_handler = &handler;
@@ -123,6 +172,12 @@ int main(int argc, char **argv)
     else
     if(current_mode.type == 1)
         printf("\nNormal mode\n");
+
+    while (1)
+    {
+        keyPressed(&current_mode);
+        break;
+    }
 
     if(current_mode.type == 0)
     {
