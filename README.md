@@ -18,3 +18,5 @@ Lynda :
 - parsing de la commande en mode Normal
 - fonction pour clear le terminal
 - fonction pour print les lignes de tildes comme dans vim
+- fonction pour recuperer la clé pressée
+- fonction pour traiter la clé pressée

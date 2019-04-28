@@ -156,8 +156,8 @@ int main(int argc, char **argv)
 
     printf("Press i to enter Insertion mode. Press ESCAPE to enter Normal mode.\n");
     unsigned char c;
-    keyPressed(&current_mode);
-    //change_mode(c, &current_mode);
+    while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!=27 );
+    change_mode(c, &current_mode);
 
     //checking
     if(current_mode.type == 0)
