@@ -145,6 +145,7 @@ int main(int argc, char **argv)
 {
     //windows resize
     //xterm -geometry 90x40
+    clear_term();
 
     //ignores CTRL+C
     struct sigaction act;
@@ -162,16 +163,10 @@ int main(int argc, char **argv)
 
     //checking
     if(current_mode.type == 0)
-        printf("\nInsert mode\n");
+        printf("\nINSERTION\n");
     else
     if(current_mode.type == 1)
-        printf("\nNormal mode\n");
-
-    while (1)
-    {
-        keyPressed(&current_mode);
-        break;
-    }
+        printf("\nNORMAL\n");
 
     if(current_mode.type == 0)
     {
@@ -179,6 +174,8 @@ int main(int argc, char **argv)
         if(argc > 1)
         {
             editorDrawRows();
+            write(STDOUT_FILENO, "\x1b[H", 3);
+
             int fd;
             fd = open(argv[1],O_RDONLY);
 
@@ -194,61 +191,49 @@ int main(int argc, char **argv)
             while( (n = read(fd, buffer, 1024)) )
                 write(STDOUT_FILENO, buffer, n);
 
+            write(STDOUT_FILENO, "\x1b[H", 3);
+            moveCursor(read(STDIN_FILENO, &c, 1));
+
             free(buffer);
             close(fd);
         }
         else
         {
+            //clear_term();
             editorDrawRows();
+            write(STDOUT_FILENO, "\x1b[H", 3);
             moveCursor(read(STDIN_FILENO, &c, 1));
         }
     }
     else
         if(current_mode.type == 1)
         {
-            char c;
-            if(read(STDIN_FILENO, &c, 1) == ':')
+            disableRawMode();
+            clear_term();
+            editorDrawRows();
+            write(STDOUT_FILENO, "\x1b[H", 3);
+            write(STDOUT_FILENO, "\x1b[0B\x1b[999B", 12);
+
+            char *s = malloc(sizeof(char) * 30);
+            while (read(STDIN_FILENO, s, 30) < 0);
+
+            char **tab;
+            parse_line(s, &tab);
+
+            if (!strcmp(tab[0], "q"))
             {
-                char *s = malloc(sizeof(char)* 100);
-                int n;
-
-                while( (n = read(STDIN_FILENO, s, 100)))
-                    write(STDOUT_FILENO, s, n);
-
-                char **tab;
-                parse_line(s, &tab);
-
-                if(!strcmp(argv[0],"q"))
-                {
-                    free(tab);
-                    free(s);
-                    fflush(STDIN_FILENO);
-                    exit(EXIT_SUCCESS);
-                }
-
-                if(!strcmp(argv[0],"w") && !argv[1])
-                if(argc > 1)
-                {
-                    //enregistre modifs dans filename qu'on avait ouvert auparavant
-                    free(s);
-                    free(tab);
-                    exit(EXIT_SUCCESS);
-                }
-
-                if(!strcmp(argv[0],"w") && argv[1])
-                {
-                    //enregistre ce qu'on a ecrit dans fichier (argv[1])
-                    free(s);
-                    free(tab);
-                    exit(EXIT_SUCCESS);
-                }
-
+                free(tab);
+                free(s);
+                printf("Exiting.\n");
+                fflush(STDIN_FILENO);
+                exit(EXIT_SUCCESS);
+            }
                 free(s);
                 free(tab);
-            }
         }
 
+    clear_term();
+    printf("Ending.\n");
     disableRawMode();
-    // clear_term();
     exit(EXIT_SUCCESS);
 }

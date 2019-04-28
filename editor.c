@@ -96,5 +96,4 @@ void editorDrawRows()
     for (y = 0; y < WIN_Y; y++) {
         write(STDOUT_FILENO, "~\r\n", 3);
     }
-    write(STDOUT_FILENO, "\x1b[H", 3);
 }
