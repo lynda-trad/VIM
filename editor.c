@@ -15,22 +15,35 @@
 
 struct termios old_t;
 
-void moveCursor(unsigned char c)
-{
-    switch(c)
+void moveCursor()
+{	
+	enableRawMode();
+	int i; 
+	char troisieme, k1;
+	for (i=0;i<3;i++) 
+	{
+	k1 = getchar();    
+		if(i==2){
+			troisieme = k1;
+		}
+
+	}
+	
+	switch(troisieme)
     {
-        case 'A':
+		case 65:
             printf("up\n");
             break;
-        case 'B':
+		case 66:
             printf("down\n");
             break;
-        case 'C':
-            printf("left\n");
-            break;
-        case 'D':
+		case 67:
             printf("right\n");
             break;
+		case 68:
+            printf("left\n");
+            break;
+
     }
 }
 

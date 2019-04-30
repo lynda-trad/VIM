@@ -22,6 +22,6 @@ void clear_term();
 
 void editorDrawRows();
 
-void moveCursor(unsigned char c);
+void moveCursor();
 
 #endif //CLONE_EDITOR_H

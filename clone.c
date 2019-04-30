@@ -200,7 +200,7 @@ int main(int argc, char **argv)
             clear_term();
             editorDrawRows();
             write(STDOUT_FILENO, "\x1b[H", 3);
-            moveCursor(read(STDIN_FILENO, &c, 1));
+            moveCursor();
         }
     }
     else
