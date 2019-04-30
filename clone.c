@@ -230,7 +230,7 @@ int main(int argc, char **argv)
                 free(tab);
         }
 
-    clear_term();
+    //clear_term();
     printf("Ending.\n");
     disableRawMode();
     exit(EXIT_SUCCESS);

@@ -17,16 +17,17 @@ struct termios old_t;
 
 void moveCursor()
 {	
-	enableRawMode();
+	//enableRawMode();
 	int i; 
 	char troisieme, k1;
-	for (i=0;i<3;i++) 
-	{
-	k1 = getchar();    
-		if(i==2){
-			troisieme = k1;
-		}
 
+	for (i=0;i<3;i++)
+	{
+	    k1 = getchar();
+		    if(i==2)
+		    {
+    			troisieme = k1;
+    		}
 	}
 	
 	switch(troisieme)
@@ -43,8 +44,8 @@ void moveCursor()
 		case 68:
             printf("left\n");
             break;
-
     }
+    //disableRawMode();
 }
 
 void die(const char *s)
