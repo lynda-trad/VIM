@@ -161,14 +161,13 @@ int main(int argc, char **argv)
 
     //checking
     if(current_mode.type == 0)
-        printf("\nINSERTION\n");
+        write(STDOUT_FILENO,"\nINSERTION\n", 11);
     else
     if(current_mode.type == 1)
-        printf("\nNORMAL\n");
+        write(STDOUT_FILENO,"\nNORMAL\n",8);
 
     if(current_mode.type == 0)
     {
-        //write from STDIN_FILENO
         if(argc > 1)
         {
             editorDrawRows();
@@ -185,22 +184,35 @@ int main(int argc, char **argv)
             char *buffer = malloc(1024 * sizeof(char));
 
             //prints the file, not able to change it yet
+            cursor_to_top();
             int n;
             while( (n = read(fd, buffer, 1024)) )
                 write(STDOUT_FILENO, buffer, n);
 
-            write(STDOUT_FILENO, "\x1b[H", 3);
-            moveCursor(read(STDIN_FILENO, &c, 1));
+            cursor_to_top();
+
+            for(int i =0; i<4; ++i) //testing arrows
+                moveCursor();
 
             free(buffer);
             close(fd);
         }
         else
         {
+            //writes from STDIN_FILENO
+            disableRawMode();
             clear_term();
             editorDrawRows();
-            write(STDOUT_FILENO, "\x1b[H", 3);
-            moveCursor();
+
+            cursor_to_bottom_left();
+
+            write(STDOUT_FILENO, "\r-- INSERT --", 13);
+
+            enableRawMode();
+            cursor_to_top();
+
+            for(int i =0; i<4; ++i) //testing arrows
+                moveCursor();
         }
     }
     else
@@ -209,8 +221,9 @@ int main(int argc, char **argv)
             disableRawMode();
             clear_term();
             editorDrawRows();
-            write(STDOUT_FILENO, "\x1b[H", 3);
-            write(STDOUT_FILENO, "\x1b[0B\x1b[999B", 12);
+            cursor_to_top();
+            cursor_to_bottom_left();
+            write(STDOUT_FILENO, "\r \r", 3);
 
             char *s = malloc(sizeof(char) * 30);
             while (read(STDIN_FILENO, s, 30) < 0);
@@ -222,16 +235,19 @@ int main(int argc, char **argv)
             {
                 free(tab);
                 free(s);
-                printf("Exiting.\n");
+                //write(STDOUT_FILENO,"\rEXITING\n",10);
+                printf("EXITING\n");
                 fflush(STDIN_FILENO);
                 exit(EXIT_SUCCESS);
             }
-                free(s);
-                free(tab);
+
+            free(s);
+            free(tab);
         }
 
     //clear_term();
-    printf("Ending.\n");
+    //write(STDOUT_FILENO,"\rENDING\n",9);
+    printf("Ending\n");
     disableRawMode();
     exit(EXIT_SUCCESS);
 }

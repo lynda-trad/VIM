@@ -24,4 +24,8 @@ void editorDrawRows();
 
 void moveCursor();
 
+void cursor_to_top();
+
+void cursor_to_bottom_left();
+
 #endif //CLONE_EDITOR_H

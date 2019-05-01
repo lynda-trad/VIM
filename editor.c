@@ -15,6 +15,18 @@
 
 struct termios old_t;
 
+void cursor_to_top()
+{
+    write(STDOUT_FILENO, "\x1b[H", 3);
+}
+
+void cursor_to_bottom_left()
+{
+    //write(STDOUT_FILENO, "\x1b[0B\x1b[999B", 12);
+
+    write(STDOUT_FILENO, "\x1b[00\x1b[999B", 12);
+}
+
 void moveCursor()
 {	
 	//enableRawMode();
@@ -23,26 +35,24 @@ void moveCursor()
 
 	for (i=0;i<3;i++)
 	{
-	    k1 = getchar();
-		    if(i==2)
-		    {
-    			troisieme = k1;
-    		}
+        read(STDIN_FILENO, &k1, 1);
+	    if(i==2)
+	        troisieme = k1;
 	}
 	
 	switch(troisieme)
     {
 		case 65:
-            printf("up\n");
+            write(STDOUT_FILENO,"up\n",3);
             break;
 		case 66:
-            printf("down\n");
+            write(STDOUT_FILENO,"down\n",5);
             break;
 		case 67:
-            printf("right\n");
+            write(STDOUT_FILENO,"right\n",6);
             break;
 		case 68:
-            printf("left\n");
+            write(STDOUT_FILENO,"left\n",5);
             break;
     }
     //disableRawMode();
@@ -98,7 +108,7 @@ void clear_term()
 
     /*
     write(STDOUT_FILENO, "\x1b[2J", 4);
-    write(STDOUT_FILENO, "\x1b[H", 3);
+    cursor_to_top();
     */
 }
 
