@@ -17,6 +17,10 @@ Lynda :
 - changement du mode Insertion au mode Normal
 - parsing de la commande en mode Normal
 - fonction pour clear le terminal
-- fonction pour print les lignes de tildes comme dans vim
+- fonction pour print les lignes de tildes
 - fonction pour recuperer la clé pressée
 - fonction pour traiter la clé pressée
+- fonctions pour placer le curseur selon le mode
+
+Nadeesha :
+-fonction pour détecter quelle flèche a été pressée
