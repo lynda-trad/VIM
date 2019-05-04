@@ -1,8 +1,8 @@
 
 Projet 2019 - Clone de vim
 
-Source : clone.c 
-Executable : clone
+Sources : clone.c editor.c clone.h editor.h
+Executable : ./clone
 
 Membres du groupe :
 
@@ -16,11 +16,10 @@ Lynda :
 - passage du mode canonique au mode non canonique
 - changement du mode Insertion au mode Normal
 - parsing de la commande en mode Normal
-- fonction pour clear le terminal
-- fonction pour print les lignes de tildes
-- fonction pour recuperer la clé pressée
-- fonction pour traiter la clé pressée
-- fonctions pour placer le curseur selon le mode
+- clear le terminal et print les lignes de tildes
+- placer le curseur selon le mode
+- afficher le character pressé
+- afficher le fichier en argument
 
 Nadeesha :
--fonction pour détecter quelle flèche a été pressée
+- détecter quelle flèche a été pressée

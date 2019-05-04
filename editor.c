@@ -1,11 +1,10 @@
-//
-// Created by Lynda on 27/04/19.
-//
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <ctype.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <unistd.h>
 
 //window
@@ -23,39 +22,64 @@ void cursor_to_top()
 void cursor_to_bottom_left()
 {
     //write(STDOUT_FILENO, "\x1b[0B\x1b[999B", 12);
-
-    write(STDOUT_FILENO, "\x1b[00\x1b[999B", 12);
+    //write(STDOUT_FILENO, "\x1b[00\x1b[999B", 12);
+    write(STDOUT_FILENO, "\033[90;0f", 9);
 }
 
+/*
+void cursor_to_location(int x, int y)
+{
+    sprintf(STDOUT_FILENO, "\x1b[%d;%dH",x ,y);
+}
+*/
+
 void moveCursor()
-{	
-	//enableRawMode();
+{
 	int i; 
 	char troisieme, k1;
 
-	for (i=0;i<3;i++)
+	for (i=0;i<2;++i)
 	{
         read(STDIN_FILENO, &k1, 1);
-	    if(i==2)
+	    if(i==1)
 	        troisieme = k1;
 	}
 	
 	switch(troisieme)
     {
-		case 65:
+		case 'A':
             write(STDOUT_FILENO,"up\n",3);
             break;
-		case 66:
+		case 'B':
             write(STDOUT_FILENO,"down\n",5);
             break;
-		case 67:
+		case 'C':
             write(STDOUT_FILENO,"right\n",6);
             break;
-		case 68:
+		case 'D':
             write(STDOUT_FILENO,"left\n",5);
             break;
     }
-    //disableRawMode();
+}
+
+void cmd_key_pressed(char key)
+{
+
+    if (key == 27)
+    {
+        moveCursor();
+    }
+    else
+    {
+        if (iscntrl(key))
+        {
+            printf("\r\n");
+        }
+        else
+        {
+            write(STDOUT_FILENO,&key,1);
+        }
+    }
 }
 
 void die(const char *s)
@@ -63,7 +87,7 @@ void die(const char *s)
     //error handler
     clear_term();
     perror(s);
-    exit(1);
+    exit(EXIT_FAILURE);
 }
 
 void disableRawMode()
@@ -105,6 +129,7 @@ void clear_term()
 {
     //2 options
     printf("\033[H\033[2J");
+    cursor_to_top();
 
     /*
     write(STDOUT_FILENO, "\x1b[2J", 4);
@@ -119,5 +144,80 @@ void editorDrawRows()
 
     for (y = 0; y < WIN_Y; y++) {
         write(STDOUT_FILENO, "~\r\n", 3);
+    }
+}
+
+char *get_file(const char *path)
+{
+    char *ret;
+    char buff[BUFF_SIZE];
+    int all_r;
+    int r;
+    int fd;
+
+    if ((fd = open(path, O_RDONLY)) < 0)
+    {
+        die("open failed\n");
+    }
+
+    ret = malloc(BUFF_SIZE + 1);
+    all_r = 0;
+
+    while ( (r = (int)read(fd, buff, BUFF_SIZE)) > 0)
+    {
+        memcpy(&ret[all_r], buff, (size_t)r);
+        all_r += r;
+        ret = realloc(ret, (size_t)(all_r + BUFF_SIZE));
+    }
+
+    close(fd);
+
+    ret[all_r] = '\0';
+    return ret;
+}
+
+unsigned int get_amount_lines(const char *s)
+{
+    unsigned int i;
+    unsigned int lines;
+    unsigned int col;
+
+    lines = 0;
+    i = 0;
+    col = 0;
+
+    while (s[i]  && lines < WIN_Y)
+    {
+        if (s[i] == '\n' ||  col >= WIN_X)
+        {
+            col = 0;
+            ++lines;
+        }
+        else
+        {
+            ++col;
+        }
+        ++i;
+    }
+
+    return i;
+}
+
+void print_file(const char *s, unsigned int n)
+{
+    unsigned int i;
+    i = 0;
+
+    while (s[i] && i < n)
+    {
+        if (s[i] == '\n')
+        {
+            printf("\r\n");
+        }
+        else
+        {
+            write(STDOUT_FILENO,&s[i],1);
+        }
+        ++i;
     }
 }

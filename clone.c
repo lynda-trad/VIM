@@ -1,7 +1,3 @@
-//
-// Created by Lynda on 22/04/19.
-//
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -166,13 +162,19 @@ int main(int argc, char **argv)
     if(current_mode.type == 1)
         write(STDOUT_FILENO,"\nNORMAL\n",8);
 
+    clear_term();
+
     if(current_mode.type == 0)
     {
         if(argc > 1)
         {
+            disableRawMode();
+            clear_term();
             editorDrawRows();
-            write(STDOUT_FILENO, "\x1b[H", 3);
 
+            // writes from file
+            enableRawMode();
+            cursor_to_top();
             int fd;
             fd = open(argv[1],O_RDONLY);
 
@@ -181,38 +183,52 @@ int main(int argc, char **argv)
                 fprintf(stderr,"can not open file");
                 exit(EXIT_FAILURE);
             }
-            char *buffer = malloc(1024 * sizeof(char));
 
             //prints the file, not able to change it yet
-            cursor_to_top();
+
+            /*
+            char *buffer = malloc(BUFF_SIZE * sizeof(char));
             int n;
             while( (n = read(fd, buffer, 1024)) )
                 write(STDOUT_FILENO, buffer, n);
+            */
+
+            char *s = get_file(argv[1]);
+            print_file(s, get_amount_lines(s));
 
             cursor_to_top();
 
-            for(int i =0; i<4; ++i) //testing arrows
-                moveCursor();
+            char key;
+            for(int i = 0; i < 4; ++i) //testing arrows
+            {
+                read(STDIN_FILENO,&key,1);
+                cmd_key_pressed(key);
+            }
 
-            free(buffer);
+            //free(buffer);
+            free(s);
             close(fd);
+            sleep(3);
         }
         else
-        {
-            //writes from STDIN_FILENO
+            {
             disableRawMode();
             clear_term();
             editorDrawRows();
-
             cursor_to_bottom_left();
-
             write(STDOUT_FILENO, "\r-- INSERT --", 13);
 
+            //writes from STDIN_FILENO
             enableRawMode();
             cursor_to_top();
 
-            for(int i =0; i<4; ++i) //testing arrows
-                moveCursor();
+            char key;
+            for (int i = 0; i < 4; ++i)
+            {
+                read(STDIN_FILENO,&key,1);
+                cmd_key_pressed(key);
+            }
+            sleep(3);
         }
     }
     else
@@ -233,8 +249,8 @@ int main(int argc, char **argv)
 
             if (!strcmp(tab[0], ":q"))
             {
-                free(tab);
                 free(s);
+                free(tab);
                 //write(STDOUT_FILENO,"\rEXITING\n",10);
                 printf("EXITING\n");
                 fflush(STDIN_FILENO);
@@ -245,7 +261,7 @@ int main(int argc, char **argv)
             free(tab);
         }
 
-    //clear_term();
+    clear_term();
     //write(STDOUT_FILENO,"\rENDING\n",9);
     printf("Ending\n");
     disableRawMode();

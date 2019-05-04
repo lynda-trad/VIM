@@ -1,7 +1,3 @@
-//
-// Created by Lynda on 27/04/19.
-//
-
 #ifndef CLONE_EDITOR_H
 #define CLONE_EDITOR_H
 
@@ -9,8 +5,7 @@
 
 #define WIN_X 90
 #define WIN_Y 40
-
-#define CTRL_KEY(k) ((k) & 0x1f)
+#define BUFF_SIZE 1024
 
 void die(const char *s);
 
@@ -27,5 +22,13 @@ void moveCursor();
 void cursor_to_top();
 
 void cursor_to_bottom_left();
+
+void cmd_key_pressed(char key);
+
+char *get_file(const char *path);
+
+unsigned int get_amount_lines(const char *s);
+
+void print_file(const char *s, unsigned int n);
 
 #endif //CLONE_EDITOR_H
