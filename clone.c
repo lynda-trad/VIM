@@ -16,126 +16,16 @@
 
 #include "clone.h"
 #include "editor.h"
-
-struct mode_s current_mode;
-
-enum mode_t
-{
-    INSERT ,
-    NORMAL
-};
-
-struct mode_s
-{
-    mode_t type;
-};
+#include "mode.h"
 
 static void handler()
 {
     //ignores the signal CTRL+C
 }
 
-char readKey()
-{
-    int n;
-    char c;
 
-    while ( (n = read(STDIN_FILENO, &c, 1) ) != 1)
-    {
-        if (n == -1 && errno != EAGAIN)
-            die("read failed");
-    }
-
-    return c;
-}
-
-void keyPressed(struct mode_s *m)
-{
-    char c = readKey();
-
-    if (iscntrl(c))
-    {
-        printf("%d\r\n", c);
-    }
-    else
-    {
-        printf("%d ('%c')\r\n", c, c);
-    }
-
-    switch (c)
-    {
-        case 105 :
-        case 27 :
-            change_mode(c, m);
-            break;
-    }
-}
-
-void change_mode(unsigned char c, struct mode_s *m)
-{
-    //goes from Insertion mode to Normal mode or vice versa
-    switch(c)
-    {
-        case 105 :
-            m->type = INSERT;
-            break;
-        case 27 :
-            m->type = NORMAL;
-            break;
-    }
-}
-
-int parse_line(char *s, char **argv[])
-{
-    // parses the line s
-    unsigned int i;
-    unsigned int len;
-    unsigned int wordl;
-
-    char **tmp;
-    char *debw;
-
-    i = 0;
-    len = 0;
-    tmp = malloc(sizeof(char*) * 1);
-
-    while(s[i] && s[i] != '\n')
-    {
-        while (s[i] == ' ')
-        {
-            ++i;
-        }
-
-        debw = &s[i];
-        wordl = 0;
-
-        while(s[i] && s[i] != ' ' && s[i] != '\n')
-        {
-            ++wordl;
-            ++i;
-        }
-
-        if(wordl)
-        {
-            tmp[len] = malloc(sizeof(char) * wordl + 1);
-
-            memcpy(tmp[len], debw, wordl);
-
-            tmp[len][wordl]= '\0';
-
-            ++len;
-
-            tmp = realloc(tmp, sizeof(char*) * (len + 1));
-        }
-    }
-
-    tmp[len] = NULL;
-    argv[0] = tmp;
-
-    return len;
-}
-
-int main(int argc, char **argv)
+//int argc, char **argv
+int main()
 {
     //windows resize
     //xterm -geometry 90x40
@@ -154,6 +44,8 @@ int main(int argc, char **argv)
     unsigned char c;
     while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!=27 );
     change_mode(c, &current_mode);
+
+    /*
 
     //checking
     if(current_mode.type == 0)
@@ -186,12 +78,10 @@ int main(int argc, char **argv)
 
             //prints the file, not able to change it yet
 
-            /*
-            char *buffer = malloc(BUFF_SIZE * sizeof(char));
-            int n;
-            while( (n = read(fd, buffer, 1024)) )
-                write(STDOUT_FILENO, buffer, n);
-            */
+            //char *buffer = malloc(BUFF_SIZE * sizeof(char));
+            //int n;
+            //while( (n = read(fd, buffer, 1024)) )
+            //   write(STDOUT_FILENO, buffer, n);
 
             char *s = get_file(argv[1]);
             print_file(s, get_amount_lines(s));
@@ -260,6 +150,7 @@ int main(int argc, char **argv)
             free(s);
             free(tab);
         }
+    */
 
     clear_term();
     //write(STDOUT_FILENO,"\rENDING\n",9);

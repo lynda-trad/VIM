@@ -1,16 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include <ctype.h>
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
 #include <unistd.h>
 
 //window
 #include <sys/ioctl.h>
 
 #include "editor.h"
+#include "mode.h"
 
 struct termios old_t;
 
@@ -21,9 +25,9 @@ void cursor_to_top()
 
 void cursor_to_bottom_left()
 {
+    write(STDOUT_FILENO, "\033[90;0f", 9);
     //write(STDOUT_FILENO, "\x1b[0B\x1b[999B", 12);
     //write(STDOUT_FILENO, "\x1b[00\x1b[999B", 12);
-    write(STDOUT_FILENO, "\033[90;0f", 9);
 }
 
 /*
@@ -41,7 +45,7 @@ void moveCursor()
 	for (i=0;i<2;++i)
 	{
         read(STDIN_FILENO, &k1, 1);
-	    if(i==1)
+	    if(i == 1)
 	        troisieme = k1;
 	}
 	
@@ -67,7 +71,16 @@ void cmd_key_pressed(char key)
 
     if (key == 27)
     {
+        /*
+        char k1;
+        if(read(STDIN_FILENO, &k1, 1) != 0)
+        */
         moveCursor();
+        /*
+        else
+            if(current_mode.type == INSERT)
+            change_mode(key, &current_mode);
+        */
     }
     else
     {
@@ -77,7 +90,15 @@ void cmd_key_pressed(char key)
         }
         else
         {
-            write(STDOUT_FILENO,&key,1);
+            /*
+            if(key == 105)
+                if(current_mode.type == NORMAL)
+                    change_mode(key, &current_mode);
+                else
+                    write(STDOUT_FILENO,&key,1);
+            else
+             */
+                write(STDOUT_FILENO,&key,1);
         }
     }
 }
