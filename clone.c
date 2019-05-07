@@ -14,9 +14,10 @@
 
 #include <errno.h>
 
+#include "mode.h"
 #include "clone.h"
 #include "editor.h"
-#include "mode.h"
+#include "terminal.h"
 
 static void handler()
 {
@@ -29,7 +30,6 @@ int main(int argc, char **argv)
 {
     //windows resize
     //xterm -geometry 90x40
-    clear_term();
 
     //ignores CTRL+C
     struct sigaction act;
@@ -37,15 +37,11 @@ int main(int argc, char **argv)
     act.sa_flags = SA_RESTART;
     sigaction(SIGINT, &act, NULL);
 
-    //non canonic mode
+    fflush(stdout);
+    clear_term();
+
     enableRawMode();
-
-    printf("Press i to enter Insertion mode. Press ESCAPE to enter Normal mode.\n");
-    unsigned char c;
-    while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!=27 );
-    change_mode(c, &current_mode);
-
-    
+    choosing_mode();
 
     //checking
     if(current_mode.type == 0)

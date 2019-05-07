@@ -8,7 +8,7 @@ Membres du groupe :
 
 Lynda Trad - u21604852
 
-Nadeesha Hatharasingha Koditthuwakku Ar - u2161052
+Nadeesha Hatharasingha Koditthuwakku Ar - u21610524
 
 Participation : 
 
@@ -23,3 +23,4 @@ Lynda :
 
 Nadeesha :
 - détecter quelle flèche a été pressée
+- fonctions pour bouger le curseur dans un fichier donné en argument en mode Insertion
