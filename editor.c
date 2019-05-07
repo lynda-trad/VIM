@@ -1,37 +1,139 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include <ctype.h>
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
 #include <unistd.h>
 
 //window
 #include <sys/ioctl.h>
 
 #include "editor.h"
+#include "mode.h"
 
 struct termios old_t;
 
-void cursor_to_top()
+void cursor_to_top_left()
 {
     write(STDOUT_FILENO, "\x1b[H", 3);
+    CUR_X=0;
+    CUR_Y=0;
 }
 
 void cursor_to_bottom_left()
 {
+    write(STDOUT_FILENO, "\033[90;0f", 9);
+    CUR_X=0;
+    CUR_Y=39;
     //write(STDOUT_FILENO, "\x1b[0B\x1b[999B", 12);
     //write(STDOUT_FILENO, "\x1b[00\x1b[999B", 12);
-    write(STDOUT_FILENO, "\033[90;0f", 9);
 }
 
-/*
-void cursor_to_location(int x, int y)
+//Se déplacer d'un caractère/d'une colonne à gauche
+void cursor_to_left(char* buffer)
 {
-    sprintf(STDOUT_FILENO, "\x1b[%d;%dH",x ,y);
+	if(CUR_Y > 0 && CUR_Y < WIN_Y){
+		CUR_Y= CUR_Y-1;
+		sprintf(buffer, "\x1b[%d;%dH", CUR_X, CUR_Y);
+// 		color_cursor(buffer);
+ 		print_file(buffer, get_amount_lines(buffer));
+	}
+}
+
+//Se déplacer d'un caractère/d'une colonne à droite
+void cursor_to_right(char* buffer)
+{
+	if(CUR_Y >= 0 && CUR_Y < WIN_Y){
+		CUR_Y= CUR_Y+1;
+		sprintf(buffer, "\x1b[%d;%dH", CUR_X, CUR_Y);
+// 		color_cursor(buffer);
+ 		print_file(buffer, get_amount_lines(buffer));
+	}
+}
+
+//Descendre d'une ligne
+void cursor_to_bottom(char* buffer)
+{
+	if(CUR_X >= 0 && CUR_X < WIN_X){
+		CUR_X= CUR_X+1;
+		sprintf(buffer, "\x1b[%d;%dH", CUR_X, CUR_Y);
+// 		color_cursor(buffer);
+ 		print_file(buffer, get_amount_lines(buffer));
+	}
+}
+
+//Monter d'une ligne
+void cursor_to_top(char* buffer)
+{
+	if(CUR_X > 0 && CUR_X < WIN_X){
+		CUR_X= CUR_X-1;
+		sprintf(buffer, "\x1b[%d;%dH", CUR_X, CUR_Y);
+// 		color_cursor(buffer);
+ 		print_file(buffer, get_amount_lines(buffer));	
+		
+	}
+}
+
+//Mettre le curseur à la position (x,y) dans le texte affiché
+void cursor_to_location(char* buffer, int x, int y)
+{
+    sprintf(buffer, "\x1b[%d;%dH", x, y);
+//     color_cursor(buffer);
+    CUR_X = x;
+    CUR_Y = y;
+    print_file(buffer, get_amount_lines(buffer));	
+
+}
+
+//Colorier uniquement l'arrière-plan du caractère situé à la position courante du texte
+/*void color_cursor(char* buffer)
+{
+	sprintf(buffer, "\x1b[91m%s", acolorier);
 }
 */
+
+void moveCursorBuf(char * buffer)
+{
+	int i; 
+	char troisieme, k1;
+
+	for (i=0;i<2;++i)
+	{
+        read(STDIN_FILENO, &k1, 1);
+	    if(i==1)
+	        troisieme = k1;
+	}
+	
+	switch(troisieme)
+    {
+		case 'A':
+//             write(STDOUT_FILENO,"up",3);
+		  cursor_to_top(buffer);
+            break;
+		case 'B':
+//               write(STDOUT_FILENO,"down",5);
+		  cursor_to_bottom(buffer);
+
+            break;
+		case 'C':
+//               write(STDOUT_FILENO,"right",6);
+		  cursor_to_right(buffer);
+
+            break;
+		case 'D':
+//               write(STDOUT_FILENO,"left",5);
+		  cursor_to_left(buffer);
+
+            break;
+    }
+} 																														
+
+
 
 void moveCursor()
 {
@@ -41,7 +143,7 @@ void moveCursor()
 	for (i=0;i<2;++i)
 	{
         read(STDIN_FILENO, &k1, 1);
-	    if(i==1)
+	    if(i == 1)
 	        troisieme = k1;
 	}
 	
@@ -61,13 +163,21 @@ void moveCursor()
             break;
     }
 }
-
-void cmd_key_pressed(char key)
+void cmd_key_pressed_buf( char* buffer, char key)
 {
 
     if (key == 27)
     {
-        moveCursor();
+        /*
+        char k1;
+        if(read(STDIN_FILENO, &k1, 1) != 0)
+        */
+        moveCursorBuf(buffer);
+        /*
+        else
+            if(current_mode.type == INSERT)
+            change_mode(key, &current_mode);
+        */
     }
     else
     {
@@ -77,7 +187,52 @@ void cmd_key_pressed(char key)
         }
         else
         {
-            write(STDOUT_FILENO,&key,1);
+            /*
+            if(key == 105)
+                if(current_mode.type == NORMAL)
+                    change_mode(key, &current_mode);
+                else
+                    write(STDOUT_FILENO,&key,1);
+            else
+             */
+                write(STDOUT_FILENO,&key,1);
+        }
+    }
+}
+
+void cmd_key_pressed(char key)
+{
+
+    if (key == 27)
+    {
+        /*
+        char k1;
+        if(read(STDIN_FILENO, &k1, 1) != 0)
+        */
+        moveCursor();
+        /*
+        else
+            if(current_mode.type == INSERT)
+            change_mode(key, &current_mode);
+        */
+    }
+    else
+    {
+        if (iscntrl(key))
+        {
+            printf("\r\n");
+        }
+        else
+        {
+            /*
+            if(key == 105)
+                if(current_mode.type == NORMAL)
+                    change_mode(key, &current_mode);
+                else
+                    write(STDOUT_FILENO,&key,1);
+            else
+             */
+                write(STDOUT_FILENO,&key,1);
         }
     }
 }
@@ -129,7 +284,7 @@ void clear_term()
 {
     //2 options
     printf("\033[H\033[2J");
-    cursor_to_top();
+    cursor_to_top_left();
 
     /*
     write(STDOUT_FILENO, "\x1b[2J", 4);

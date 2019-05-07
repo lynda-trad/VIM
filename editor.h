@@ -7,6 +7,13 @@
 #define WIN_Y 40
 #define BUFF_SIZE 1024
 
+//Abscisse (colonnes)
+int CUR_X;
+
+//Ordonnée (lignes)
+int CUR_Y;
+
+
 void die(const char *s);
 
 void disableRawMode();
@@ -17,11 +24,25 @@ void clear_term();
 
 void editorDrawRows();
 
-void moveCursor();
-
-void cursor_to_top();
+void cursor_to_top_left();
 
 void cursor_to_bottom_left();
+
+void cursor_to_left(char* buffer);
+
+void cursor_to_bottom(char* buffer);
+
+void cursor_to_top(char* buffer);
+
+void cursor_to_right(char* buffer);
+
+void color_cursor(char* buffer);
+
+void moveCursorBuf(char* buffer);
+
+void moveCursor();
+
+void cmd_key_pressed_buf( char* buffer, char key);
 
 void cmd_key_pressed(char key);
 
