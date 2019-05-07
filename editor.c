@@ -13,8 +13,9 @@
 //window
 #include <sys/ioctl.h>
 
-#include "editor.h"
 #include "mode.h"
+#include "editor.h"
+#include "terminal.h"
 
 struct termios old_t;
 

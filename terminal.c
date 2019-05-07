@@ -24,7 +24,7 @@ void cursor_to_top()
 
 void cursor_to_bottom_left()
 {
-    write(STDOUT_FILENO, "\033[90;0f", 9);
+    write(STDOUT_FILENO, "\033[42;1f", 9);
     //write(STDOUT_FILENO, "\x1b[0B\x1b[999B", 12);
     //write(STDOUT_FILENO, "\x1b[00\x1b[999B", 12);
 }
@@ -95,7 +95,7 @@ void editorDrawRows()
     //draws the line of tildes like vim
     int y;
 
-    for (y = 0; y < WIN_Y; y++) {
+    for (y = 0; y < WIN_Y-2; y++) {
         write(STDOUT_FILENO, "~\r\n", 3);
     }
 }

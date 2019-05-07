@@ -15,6 +15,15 @@
 
 #include "mode.h"
 #include "editor.h"
+#include "terminal.h"
+
+void choosing_mode()
+{
+    printf("Press i to enter Insertion mode. Press ESCAPE to enter Normal mode.\n");
+    unsigned char c;
+    while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!=27 );
+    change_mode(c, &current_mode);
+}
 
 void change_mode(unsigned char c, struct mode_s *m)
 {
@@ -116,6 +125,12 @@ void normal_mode()
             disableRawMode();
             write(STDOUT_FILENO, "\r \r", 3);
             write(STDOUT_FILENO, &c, 1);
+
+            /*
+            read(STDIN_FILENO,&c,1);
+            if (c == 8)
+                insertion_mode();
+            */
 
             char *s = malloc(sizeof(char) * 30);
             while (read(STDIN_FILENO, s, 30) < 0);

@@ -14,9 +14,10 @@
 
 #include <errno.h>
 
+#include "mode.h"
 #include "clone.h"
 #include "editor.h"
-#include "mode.h"
+#include "terminal.h"
 
 static void handler()
 {
@@ -39,10 +40,7 @@ int main()
     //non canonic mode
     enableRawMode();
 
-    printf("Press i to enter Insertion mode. Press ESCAPE to enter Normal mode.\n");
-    unsigned char c;
-    while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!=27 );
-    change_mode(c, &current_mode);
+    choosing_mode();
 
     /*
 
