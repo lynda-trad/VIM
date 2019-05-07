@@ -23,7 +23,6 @@ static void handler()
     //ignores the signal CTRL+C
 }
 
-
 //int argc, char **argv
 int main()
 {
