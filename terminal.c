@@ -14,12 +14,10 @@
 #include "editor.h"
 #include "terminal.h"
 
-//cursor coordinates
-struct cursor_t cursor;
-
 void cursor_to_top()
 {
     write(STDOUT_FILENO, "\x1b[H", 3);
+    //write(STDOUT_FILENO, "\033[1;1f", 9);
 }
 
 void cursor_to_bottom_left()
@@ -44,9 +42,10 @@ void print_cursor()
 void moveCursor()
 {
     int i;
-    char troisieme, k1;
+    char troisieme;
+    char k1;
 
-    for (i=0;i<2;++i)
+    for (i = 0; i < 2; ++i)
     {
         read(STDIN_FILENO, &k1, 1);
         if(i == 1)
@@ -75,19 +74,29 @@ void moveCursor()
             if (cursor.C_X != 0)
                 cursor.C_X--;
             break;
+        default :
+            read(STDIN_FILENO, &k1, 1);
+            if( k1 == '\0')
+                change_mode(troisieme, &current_mode);
+            break;
+    }
+}
+
+void increment_cursor()
+{
+    if (cursor.C_X != WIN_X - 1)
+        cursor.C_X++;
+    else
+    {
+        cursor.C_X = 0;
+        cursor.C_Y++;
     }
 }
 
 void clear_term()
 {
-    //2 options
-    printf("\033[H\033[2J");
-    cursor_to_top();
-
-    /*
     write(STDOUT_FILENO, "\x1b[2J", 4);
     cursor_to_top();
-    */
 }
 
 void editorDrawRows()
@@ -100,9 +109,8 @@ void editorDrawRows()
     }
 }
 
-void refresh_screen()
+void initEditor()
 {
-    clear_term();
-    editorDrawRows();
-    cursor_to_top();
+    cursor.C_X = 0;
+    cursor.C_Y = 0;
 }

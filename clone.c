@@ -29,7 +29,6 @@ int main()
 {
     //windows resize
     //xterm -geometry 90x40
-    clear_term();
 
     //ignores CTRL+C
     struct sigaction act;
@@ -37,13 +36,13 @@ int main()
     act.sa_flags = SA_RESTART;
     sigaction(SIGINT, &act, NULL);
 
-    //non canonic mode
-    enableRawMode();
+    fflush(stdout);
+    clear_term();
 
+    enableRawMode();
     choosing_mode();
 
     /*
-
     //checking
     if(current_mode.type == 0)
         write(STDOUT_FILENO,"\nINSERTION\n", 11);

@@ -21,37 +21,20 @@ struct termios old_t;
 
 void cmd_key_pressed(char key)
 {
-
     if (key == 27)
     {
-        /*
-        char k1;
-        if(read(STDIN_FILENO, &k1, 1) != 0)
-        */
         moveCursor();
-        /*
-        else
-            if(current_mode.type == INSERT)
-            change_mode(key, &current_mode);
-        */
     }
     else
     {
         if (iscntrl(key))
-        {
-            printf("\r\n");
+        { //need to code backspace with cursor
+            write(STDOUT_FILENO,"\r\n",2);
         }
         else
         {
-            /*
-            if(key == 105)
-                if(current_mode.type == NORMAL)
-                    change_mode(key, &current_mode);
-                else
-                    write(STDOUT_FILENO,&key,1);
-            else
-             */
-                write(STDOUT_FILENO,&key,1);
+            write(STDOUT_FILENO,&key,1);
+            increment_cursor();
         }
     }
 }
@@ -98,7 +81,6 @@ void enableRawMode()
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &new_t) == -1)
         die("tcsetattr failed : enableRawMode()");
 }
-
 
 char *get_file(const char *path)
 {
