@@ -106,16 +106,18 @@ void insertion_mode()
 void normal_mode()
 {
     refresh_screen();
+    cursor_to_bottom_left();
     char c;
     while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!= 58);
+
     if(c == 105)
         insertion_mode();
     else
         if(c == 58)
         {
             disableRawMode();
-            cursor_to_bottom_left();
             write(STDOUT_FILENO, "\r \r", 3);
+            write(STDOUT_FILENO, &c, 1);
 
             char *s = malloc(sizeof(char) * 30);
             while (read(STDIN_FILENO, s, 30) < 0);
@@ -123,7 +125,7 @@ void normal_mode()
             char **tab;
             parse_line(s, &tab);
 
-            if (!strcmp(tab[0], ":q")) {
+            if (!strcmp(tab[0], "q")) {
                 free(s);
                 free(tab);
                 //write(STDOUT_FILENO,"\rEXITING\n",10);
