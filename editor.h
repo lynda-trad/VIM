@@ -7,12 +7,6 @@
 #define WIN_Y 40
 #define BUFF_SIZE 1024
 
-struct cursor_t
-{
-    unsigned int C_X;
-    unsigned int C_Y;
-};
-
 void die(const char *s);
 
 void disableRawMode();

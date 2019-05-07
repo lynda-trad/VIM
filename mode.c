@@ -18,6 +18,7 @@
 
 void change_mode(unsigned char c, struct mode_s *m)
 {
+    refresh_screen();
     //goes from Insertion mode to Normal mode or vice versa
     switch(c)
     {
@@ -85,8 +86,6 @@ int parse_line(char *s, char **argv[])
 void insertion_mode()
 {
     disableRawMode();
-    clear_term();
-    editorDrawRows();
     cursor_to_bottom_left();
     write(STDOUT_FILENO, "\r-- INSERT --", 13);
 
@@ -105,7 +104,6 @@ void insertion_mode()
 
 void normal_mode()
 {
-    refresh_screen();
     cursor_to_bottom_left();
     char c;
     while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!= 58);
