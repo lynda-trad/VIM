@@ -5,7 +5,14 @@
 
 #define BUFF_SIZE 1024
 
-void die(const char *s);
+typedef struct
+{
+    char *buff;
+    unsigned int len; //où est le dernier caractere écrit
+    unsigned int cur; //où se trouve le caractère qu'on est en train d'écrire
+} buff_t;
+
+buff_t writing_buff;
 
 void disableRawMode();
 

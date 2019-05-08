@@ -5,18 +5,10 @@
 #ifndef MAIN_CLONE_H
 #define MAIN_CLONE_H
 
-enum mode_t;
+char *file;
 
-struct mode_s;
+void die(const char *s);
 
-static void handler();
-
-void change_mode(unsigned char c, struct mode_s *m);
-
-int parse_line(char *s, char **argv[]);
-
-char readKey();
-
-void keyPressed(struct mode_s *m);
+void handler();
 
 #endif //MAIN_CLONE_H

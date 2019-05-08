@@ -19,17 +19,31 @@
 #include "editor.h"
 #include "terminal.h"
 
-static void handler()
+void handler()
 {
     //ignores the signal CTRL+C
 }
 
+void die(const char *s)
+{
+    //error handler
+    fflush(stdout);
+    clear_term();
+    perror(s);
+    exit(EXIT_FAILURE);
+}
 
 //int argc, char **argv
 int main(int argc, char **argv)
 {
     //windows resize
     //xterm -geometry 90x40
+
+    if(argc > 1)
+    {
+        file = malloc( strlen(argv[1]) + 1 );
+        strcpy(file, argv[1]);
+    }
 
     //ignores CTRL+C
     struct sigaction act;
@@ -39,6 +53,9 @@ int main(int argc, char **argv)
 
     fflush(stdout);
     clear_term();
+
+    if(argc > 1)
+        writing_buff.buff = get_file(argv[1]);
 
     enableRawMode();
     choosing_mode();
@@ -79,24 +96,28 @@ int main(int argc, char **argv)
             //while( (n = read(fd, buffer, 1024)) )
             //   write(STDOUT_FILENO, buffer, n);
 
-            char *s = get_file(argv[1]);
-            print_file(s, get_amount_lines(s));
+            //char *s = get_file(argv[1]);
+            //print_file(s, get_amount_lines(s));
+
+            print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
 
             cursor_to_top_left();
 
             char key;
-            for(int i = 0; i < 50; ++i) //testing arrows
+            for(int i = 0; i < 100; ++i) //testing arrows
             {
                 read(STDIN_FILENO,&key,1);
-                cmd_key_pressed_buf(s,key);
+                cmd_key_pressed_buf(writing_buff.buff,key);
+                //cmd_key_pressed_buf(s,key);
             }
 
             //free(buffer);
-            free(s);
+            //free(s);
+            free(writing_buff.buff);
             close(fd);
             sleep(3);
         }
-        else
+        else // pas demandé dans l'énoncé je crois
             {
             disableRawMode();
             clear_term();

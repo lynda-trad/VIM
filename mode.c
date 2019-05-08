@@ -14,6 +14,7 @@
 #include <fcntl.h>
 
 #include "mode.h"
+#include "clone.h"
 #include "editor.h"
 #include "terminal.h"
 
@@ -36,11 +37,11 @@ void change_mode(unsigned char c, struct mode_s *m)
     {
         case 105 :
             m->type = INSERT;
-//             insertion_mode();
+//          insertion_mode();
             break;
         case 27 :
             m->type = NORMAL;
-//             normal_mode();
+            normal_mode();
             break;
     }
 }
@@ -123,11 +124,54 @@ void normal_mode()
         char **tab;
         parse_line(s, &tab);
 
-        if (!strcmp(tab[0], "q")) {
+        if (!strcmp(tab[0], "q"))
+        {
             free(s);
             free(tab);
             //write(STDOUT_FILENO,"\rEXITING\n",10);
             printf("EXITING\n");
+            fflush(STDIN_FILENO);
+            exit(EXIT_SUCCESS);
+        }
+
+        if (!strcmp(tab[0], "w") && !tab[1])
+        {
+            int fd = open(file, O_CREAT|O_RDWR|O_TRUNC);
+
+            if(fd < 0 )
+                die("open failed\n");
+
+            //write_to_file(file, writing_buff.buff);
+            write(fd,writing_buff.buff,writing_buff.len);
+
+            free(writing_buff.buff);
+            free(s);
+            free(tab);
+            close(fd);
+
+            //write(STDOUT_FILENO,"\rEXITING\n",10);
+            printf("SAVED TO %s\n", file);
+            fflush(STDIN_FILENO);
+            exit(EXIT_SUCCESS);
+        }
+
+        if (!strcmp(tab[0], "w") && tab[1])
+        {
+
+            int fd = open(tab[1], O_CREAT|O_RDWR|O_TRUNC, 0644);
+
+            if(fd < 0 )
+                die("open failed\n");
+
+            //write_to_file(tab[1], writing_buff.buff);
+            write(fd,writing_buff.buff, writing_buff.len);
+
+            free(writing_buff.buff);
+            free(s);
+            free(tab);
+            close(fd);
+            //write(STDOUT_FILENO,"\rEXITING\n",10);
+            printf("SAVED TO %s\n", tab[1]);
             fflush(STDIN_FILENO);
             exit(EXIT_SUCCESS);
         }

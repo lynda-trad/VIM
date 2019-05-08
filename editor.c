@@ -14,18 +14,11 @@
 #include <sys/ioctl.h>
 
 #include "mode.h"
+#include "clone.h"
 #include "editor.h"
 #include "terminal.h"
 
 struct termios old_t;
-
-void die(const char *s)
-{
-    //error handler
-    clear_term();
-    perror(s);
-    exit(EXIT_FAILURE);
-}
 
 void disableRawMode()
 {
@@ -129,6 +122,7 @@ char *get_file(const char *path)
     close(fd);
 
     ret[all_r] = '\0';
+    writing_buff.len = all_r;
     return ret;
 }
 
@@ -182,9 +176,9 @@ int write_to_file(const char *path, const char *str)
 {
     int fd;
 
-    if ((fd = open(path, O_WRONLY)) > 0)
+    if ((fd = open(path, O_CREAT|O_RDWR|O_TRUNC)) > 0)
     {
-        write(1, str, strlen(str));
+        write(fd, str, strlen(str) + 1);
         close(fd);
         return 0;
     }
