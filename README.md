@@ -23,3 +23,4 @@ Nadeesha :
 - détecter quelle flèche a été pressée
 - fonctions pour bouger le curseur dans un fichier donné en argument en mode Insertion
 - afficher le curseur
+- detecter backspace et suppr

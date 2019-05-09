@@ -39,23 +39,26 @@ int main(int argc, char **argv)
     //windows resize
     //xterm -geometry 90x40
 
-    if(argc > 1)
-    {
-        file = malloc( strlen(argv[1]) + 1 );
-        strcpy(file, argv[1]);
-    }
-
     //ignores CTRL+C
     struct sigaction act;
     act.sa_handler = &handler;
     act.sa_flags = SA_RESTART;
     sigaction(SIGINT, &act, NULL);
 
+
     fflush(stdout);
     clear_term();
 
+
     if(argc > 1)
+    {
+        file = malloc(strlen(argv[1]) + 1);
+        strcpy(file, argv[1]);
         writing_buff.buff = get_file(argv[1]);
+    }
+    else
+        writing_buff.buff = malloc(sizeof(char) * BUFF_SIZE);
+
 
     enableRawMode();
     choosing_mode();
@@ -91,14 +94,6 @@ int main(int argc, char **argv)
 
             //prints the file, not able to change it yet
 
-            //char *buffer = malloc(BUFF_SIZE * sizeof(char));
-            //int n;
-            //while( (n = read(fd, buffer, 1024)) )
-            //   write(STDOUT_FILENO, buffer, n);
-
-            //char *s = get_file(argv[1]);
-            //print_file(s, get_amount_lines(s));
-
             print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
 
             cursor_to_top_left();
@@ -111,8 +106,6 @@ int main(int argc, char **argv)
                 //cmd_key_pressed_buf(s,key);
             }
 
-            //free(buffer);
-            //free(s);
             free(writing_buff.buff);
             close(fd);
             sleep(3);
@@ -132,9 +125,15 @@ int main(int argc, char **argv)
             char key;
             for (int i = 0; i < 4; ++i)
             {
+                /*
                 read(STDIN_FILENO,&key,1);
                 cmd_key_pressed(key);
+                */
+                read(STDIN_FILENO,&key,1);
+                cmd_key_pressed_buf(writing_buff.buff,key);
             }
+
+            free(writing_buff.buff);
             sleep(3);
         }
     }
