@@ -46,6 +46,8 @@ void cursor_to_top_left()
 //write(STDOUT_FILENO, "\033[1;1f", 9);
     cursor.C_X=0;
     cursor.C_Y=0;
+    writing_buff.cur = 0;
+
 }
 
 void cursor_to_bottom_left()
@@ -53,6 +55,8 @@ void cursor_to_bottom_left()
     write(STDOUT_FILENO, "\033[42;1f", 9);
     cursor.C_X=0;
     cursor.C_Y=39;
+    writing_buff.cur = sizeof(writing_buff.buff) -1;
+
     //write(STDOUT_FILENO, "\x1b[0B\x1b[999B", 12);
     //write(STDOUT_FILENO, "\x1b[00\x1b[999B", 12);
 }
@@ -170,6 +174,8 @@ void cursor_to_top(char* buffer)
 		sprintf(buffer, "\x1b[%d;%dH", cursor.C_X, cursor.C_Y);
 // 		color_cursor(buffer);
  		print_file(buffer, get_amount_lines(buffer));
+		
+	   writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
 	}
 }
 

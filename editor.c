@@ -87,7 +87,7 @@ void cmd_key_pressed_buf( char* buffer, char key)
     {
         if (iscntrl(key))
         {
-            printf("\r\n");
+	   delete_character(key);
         }
         else
         {
@@ -95,6 +95,43 @@ void cmd_key_pressed_buf( char* buffer, char key)
         }
     }
 }
+
+//Ne marche pas, détecte pas BACKSPACE ou SUPPR
+void delete_character(char key)
+{
+/*
+ //A partir de la position courante, buffer[i]=buffer[i+1]
+		for(unsigned int i= writing_buff.cur+1; i< writing_buff.len; i++){
+			writing_buff.buff[i]= writing_buff.buff[i+1];
+		}
+		print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+	}
+*/
+
+if (iscntrl(key))
+{
+//key= SUPPR ou BACKSPACE
+    if (key==8 || key==127)
+    {
+		char* new_buff= malloc(sizeof(writing_buff.buff)-1);
+		unsigned int i;
+// On copie tout ce qui est avant le curseur 
+		for(i=0;i< writing_buff.cur;i++){
+			new_buff[i]= writing_buff.buff[i];
+		}
+// On copie tout ce qui est juste après le curseur pour supprimer le caractère qui est actuellement dans le curseur
+		for(unsigned int j= writing_buff.cur+1; j< writing_buff.len; j++){
+			new_buff[i+1]= writing_buff.buff[j];
+		}
+		writing_buff.buff= new_buff;
+		print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+		cursor.C_Y--;
+	}
+
+}
+}
+	
+
 
 char *get_file(const char *path)
 {
