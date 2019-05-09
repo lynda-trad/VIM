@@ -60,6 +60,9 @@ void cmd_key_pressed_buf(char* buffer, char key)
 
     switch(key)
     {
+        case 9: //ECHAP ( en vrai TAB )
+            normal_mode();
+        break;
         case 127:
             delete_character(key);
         break;
@@ -77,6 +80,8 @@ void cmd_key_pressed_buf(char* buffer, char key)
             else
             {
                 write(STDOUT_FILENO,&key,1);
+                writing_buff.buff[writing_buff.len] = key;
+                ++writing_buff.len;
             }
         break;
     }
