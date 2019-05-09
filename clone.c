@@ -33,7 +33,6 @@ void die(const char *s)
     exit(EXIT_FAILURE);
 }
 
-//int argc, char **argv
 int main(int argc, char **argv)
 {
     //windows resize
@@ -45,10 +44,8 @@ int main(int argc, char **argv)
     act.sa_flags = SA_RESTART;
     sigaction(SIGINT, &act, NULL);
 
-
     fflush(stdout);
     clear_term();
-
 
     if(argc > 1)
     {
@@ -123,12 +120,8 @@ int main(int argc, char **argv)
             cursor_to_top_left();
 
             char key;
-            for (int i = 0; i < 4; ++i)
+            for (int i = 0; i < 100; ++i)
             {
-                /*
-                read(STDIN_FILENO,&key,1);
-                cmd_key_pressed(key);
-                */
                 read(STDIN_FILENO,&key,1);
                 cmd_key_pressed_buf(writing_buff.buff,key);
             }
@@ -140,6 +133,9 @@ int main(int argc, char **argv)
     else
         if(current_mode.type == 1)
         {
+            normal_mode();
+
+            /*
             disableRawMode();
             clear_term();
             editorDrawRows();
@@ -165,8 +161,8 @@ int main(int argc, char **argv)
 
             free(s);
             free(tab);
+            */
         }
-    
 
     clear_term();
     //write(STDOUT_FILENO,"\rENDING\n",9);

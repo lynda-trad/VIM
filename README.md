@@ -18,9 +18,16 @@ Lynda :
 - commandes :q :w et :w fichier en mode Normal
 - afficher le character pressé
 - afficher le fichier en argument
+- detecter backspace et suppr
 
 Nadeesha :
 - détecter quelle flèche a été pressée
 - fonctions pour bouger le curseur dans un fichier donné en argument en mode Insertion
 - afficher le curseur
-- detecter backspace et suppr
+- comportement du buffer et du curseur si on presse backspace et suppr
+
+
+Difficultés rencontrées :
+- le passage du mode normal au mode insertion une fois la ligne de commande commencée.
+- passage du mode insertion au mode normal, on doit presser ECHAP ( c == 27 ),
+cela provoque conflits avec la détection des flèches.

@@ -18,8 +18,6 @@ void disableRawMode();
 
 void enableRawMode();
 
-void cmd_key_pressed(char key);
-
 void cmd_key_pressed_buf( char* buffer, char key);
 
 void delete_character(char key);

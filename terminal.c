@@ -53,9 +53,9 @@ void cursor_to_top_left()
 void cursor_to_bottom_left()
 {
     write(STDOUT_FILENO, "\033[42;1f", 9);
-    cursor.C_X=0;
-    cursor.C_Y=39;
-    writing_buff.cur = sizeof(writing_buff.buff) -1;
+    cursor.C_X = 0;
+    cursor.C_Y = 39;
+    writing_buff.cur = sizeof(writing_buff.buff) - 1;
 
     //write(STDOUT_FILENO, "\x1b[0B\x1b[999B", 12);
     //write(STDOUT_FILENO, "\x1b[00\x1b[999B", 12);
@@ -67,100 +67,38 @@ void cursor_to_location(int x, int y)
     sprintf(buf, "\x1b[%d;%dH",x ,y);
 }
 
-void print_cursor()
-{
-    char buf[32];
-    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", cursor.C_Y + 1, cursor.C_X + 1);
-}
-
-void moveCursor()
-{
-    int i;
-    char troisieme;
-    char k1;
-
-    for (i = 0; i < 2; ++i)
-    {
-        read(STDIN_FILENO, &k1, 1);
-        if(i == 1)
-            troisieme = k1;
-    }
-
-    switch(troisieme)
-    {
-        case 'A':
-            write(STDOUT_FILENO,"up\n",3);
-            if (cursor.C_Y != 0)
-                cursor.C_Y--;
-            break;
-        case 'B':
-            write(STDOUT_FILENO,"down\n",5);
-            if (cursor.C_Y != WIN_Y - 1)
-                cursor.C_Y++;
-            break;
-        case 'C':
-            write(STDOUT_FILENO,"right\n",6);
-            if (cursor.C_X != WIN_X - 1)
-                cursor.C_X++;
-            break;
-        case 'D':
-            write(STDOUT_FILENO,"left\n",5);
-            if (cursor.C_X != 0)
-                cursor.C_X--;
-            break;
-        default :
-            read(STDIN_FILENO, &k1, 1);
-            if( k1 == '\0')
-                change_mode(troisieme, &current_mode);
-            break;
-    }
-}
-
-void increment_cursor()
-{
-    if (cursor.C_X != WIN_X - 1)
-        cursor.C_X++;
-    else
-    {
-        cursor.C_X = 0;
-        cursor.C_Y++;
-    }
-}
-
 //Gestion du curseur en mode insertion pour un texte déjà affiché (par un fichier donné en argument)
 
-void moveCursorBuf(char * buffer)
+void moveCursorBuf(char *buffer)
 {
     int i;
     char troisieme, k1;
 
-    for (i = 0;i < 2; ++i)
+    for (i = 0; i < 2; ++i)
     {
         read(STDIN_FILENO, &k1, 1);
-        if(i ==1 )
+        if(i == 1 )
             troisieme = k1;
     }
 
     switch(troisieme)
     {
-        case 'A':
-//             write(STDOUT_FILENO,"up",3);
+        case 'A': //up
             cursor_to_top(buffer);
             break;
-        case 'B':
-//               write(STDOUT_FILENO,"down",5);
+        case 'B': //down
             cursor_to_bottom(buffer);
-
             break;
-        case 'C':
-//               write(STDOUT_FILENO,"right",6);
+        case 'C': //right
             cursor_to_right(buffer);
-
             break;
-        case 'D':
-//               write(STDOUT_FILENO,"left",5);
+        case 'D': //left
             cursor_to_left(buffer);
-
+            break;
+        case 3:
+            read(STDIN_FILENO, &k1, 1);
+            if( k1 == '~')
+                delete_character(k1);
             break;
     }
 }

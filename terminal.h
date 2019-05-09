@@ -19,17 +19,13 @@ void clear_term();
 
 void editorDrawRows();
 
+void moveCursorBuf(char * buffer);
+
 void cursor_to_top_left();
 
 void cursor_to_bottom_left();
 
 void cursor_to_location(int x, int y);
-
-void print_cursor();
-
-void moveCursor();
-
-void increment_cursor();
 
 void cursor_to_top(char* buffer);
 
@@ -40,9 +36,5 @@ void cursor_to_right(char* buffer);
 void cursor_to_left(char* buffer);
 
 // void color_cursor(char* buffer);
-
-void moveCursorBuf(char * buffer);
-
-
 
 #endif //CLONE_TERMINAL_H

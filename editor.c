@@ -55,29 +55,38 @@ void enableRawMode()
         die("tcsetattr failed : enableRawMode()");
 }
 
-void cmd_key_pressed(char key)
-{
-    if (key == 27)
-    {
-        moveCursor();
-    }
-    else
-    {
-        if (iscntrl(key))
-        { //need to code backspace with cursor
-            write(STDOUT_FILENO,"\r\n",2);
-        }
-        else
-        {
-            write(STDOUT_FILENO,&key,1);
-            increment_cursor();
-        }
-    }
-}
-
 void cmd_key_pressed_buf(char* buffer, char key)
 {
 
+    switch(key)
+    {
+        case 127:
+            delete_character(key);
+        break;
+
+        case 27:
+            moveCursorBuf(buffer);
+        break;
+
+        default :
+            if (iscntrl(key))
+            {
+                write(STDOUT_FILENO,"\r\n",2);
+                //delete_character(key);
+            }
+            else
+            {
+                write(STDOUT_FILENO,&key,1);
+            }
+        break;
+    }
+
+    /*
+    if(key == 127 )
+    {// backspace
+        delete_character(key);
+    }
+    else
     if (key == 27)
     {
         moveCursorBuf(buffer);
@@ -94,51 +103,77 @@ void cmd_key_pressed_buf(char* buffer, char key)
             write(STDOUT_FILENO,&key,1);
         }
     }
+     */
 }
 
-//Ne marche pas, détecte pas BACKSPACE ou SUPPR
+//Segfault tant qu'on code pas le buffer
 void delete_character(char key)
 {
 
 /*
- //A partir de la position courante, buffer[i]=buffer[i+1]
-		for(unsigned int i= writing_buff.cur+1; i< writing_buff.len; i++)
-		{
-			writing_buff.buff[i]= writing_buff.buff[i+1];
-		}
-		print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
-	}
-*/
+ *   SUPPR : Erase to the right -> pas égal à 8
+ *   ^[[3~
+ *   27 + [ + 3 + ~
+ *   case 27 : commence comme flèches
+ *   mais a la place de A B C D c'est 3~
+ *
+ *  BACKSPACE : Erase to the left
+ *      read(STDIN_FILENO, &c, 1);
+ *      c == 127 == backspace
+ * */
 
-    if (iscntrl(key))
-    {
-//      key= SUPPR ou BACKSPACE
-        if (key == 8 || key == 127)
+//      key = BACKSPACE ; Erase to the left
+        if (key == 127)
         {
-    		char* new_buff= malloc(sizeof(writing_buff.buff)-1);
+    		char* new_buff = malloc(sizeof(writing_buff.buff)-1);
 	    	unsigned int i;
 
 //      On copie tout ce qui est avant le curseur
 
-		    for(i = 0;i< writing_buff.cur; i++)
+		    for(i = 0; i < writing_buff.cur; i++)
 		    {
-			    new_buff[i]= writing_buff.buff[i];
+			    new_buff[i] = writing_buff.buff[i];
 		    }
 
 //      On copie tout ce qui est juste après le curseur pour supprimer le caractère qui est actuellement dans le curseur
 
-            for(unsigned int j= writing_buff.cur+1; j< writing_buff.len; j++)
+            for(unsigned int j = writing_buff.cur + 1; j< writing_buff.len; j++)
 		    {
-    		    new_buff[i+1]= writing_buff.buff[j];
+    		    new_buff[i+1] = writing_buff.buff[j];
 	    	}
 
-		    writing_buff.buff= new_buff;
+		    writing_buff.buff = new_buff;
 		    print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+
 		    cursor.C_Y--;
+            writing_buff.cur--;
+		    writing_buff.len--;
 	    }
-    }
+        else if(key == 126) // ~ tilde a la fin de SUPPR
+        {
+            char* new_buff = malloc(sizeof(writing_buff.buff)-1);
+            unsigned int i;
+
+//      On copie tout ce qui est avant le curseur, inclus
+
+            for(i = 0; i < writing_buff.cur + 1; i++)
+            {
+                new_buff[i] = writing_buff.buff[i];
+            }
+
+//      On copie tout ce qui est après le char qu'on veut supprimer, il est juste après le curseur
+
+            for(unsigned int j = writing_buff.cur + 2; j< writing_buff.len; j++)
+            {
+                new_buff[i+1] = writing_buff.buff[j];
+            }
+
+            writing_buff.buff = new_buff;
+            print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+
+            writing_buff.len--;
+        }
 }
-	
 
 
 char *get_file(const char *path)
