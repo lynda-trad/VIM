@@ -16,7 +16,6 @@ Lynda :
 - passage du mode Normal au mode Insertion
 - parsing de la commande en mode Normal
 - commandes :q :w et :w fichier en mode Normal
-- afficher le character pressé
 - afficher le fichier en argument
 - detecter backspace et suppr
 
@@ -30,4 +29,4 @@ Nadeesha :
 Difficultés rencontrées :
 - le passage du mode normal au mode insertion une fois la ligne de commande commencée.
 - passage du mode insertion au mode normal, on doit presser ECHAP ( c == 27 ),
-cela provoque conflits avec la détection des flèches.
+cela provoque conflits avec la détection des flèches, on l'a donc remplacé par TAB.

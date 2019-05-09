@@ -95,8 +95,15 @@ int parse_line(char *s, char **argv[])
 
 void normal_mode()
 {
+    fflush(stdout);
+    disableRawMode();
     clear_term();
     editorDrawRows();
+
+    enableRawMode();
+    cursor_to_top_left();
+    print_file(writing_buff.buff, writing_buff.len);
+
     cursor_to_bottom_left();
     write(STDOUT_FILENO, "\r                  \r",20);
     char c;
@@ -148,6 +155,7 @@ void normal_mode()
                 else
                     {
                         write(STDOUT_FILENO, "Please put a filename after :w.", 30);
+                        sleep(1);
                         free(s);
                         free(tab);
                         fflush(STDIN_FILENO);
@@ -185,6 +193,7 @@ void normal_mode()
 
 void insertion_mode()
 {
+    fflush(stdout);
     disableRawMode();
     clear_term();
     editorDrawRows();
@@ -196,8 +205,8 @@ void insertion_mode()
     initEditor();
     //writes from STDIN_FILENO
     enableRawMode();
-    print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
     cursor_to_top_left();
+    print_file(writing_buff.buff, writing_buff.len);
 
     char key;
     while(1)
@@ -207,3 +216,5 @@ void insertion_mode()
         cursor_to_location(cursor.C_X,cursor.C_Y);
     }
 }
+
+//git commit -am "EDIT: insertion_mode() pour reafficher le buffer quand on passe de normal a insertion"
