@@ -93,7 +93,7 @@ void cursor_to_bottom_left()
 {
     write(STDOUT_FILENO, "\033[42;1f", 9);
     cursor.C_X = 0;
-    cursor.C_Y = 42;
+    cursor.C_Y = 40;
 
     //writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 

@@ -21,9 +21,11 @@
 void choosing_mode()
 {
     //where you choose the mode
-    write(STDOUT_FILENO,"Press i to enter Insertion mode. Press TAB to enter Normal mode.\n", 68);
+    write(STDOUT_FILENO,"Press i to enter Insertion mode. Press TAB to enter Normal mode.\n\r", 68);
+    write(STDOUT_FILENO,"\n\rIn Normal mode:\n\r\n\r :i = go back to Insertion mode\n\r :w = save to current opened file\n\r", 89);
+    write(STDOUT_FILENO," :w <filename> = save to <filename>\n\r :q = quit clone\n\r :q! = quit without saving\n\r", 83);
     unsigned char c;
-    while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!=27 );
+    while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!= 9 );
     fflush(stdout);
     change_mode(c);
 }
@@ -36,11 +38,157 @@ void change_mode(unsigned char c)
         case 105 :
             insertion_mode();
             break;
-        case 27 :
+        case 9 :
             normal_mode();
             break;
     }
 }
+void insertion_mode()
+{
+    fflush(stdout);
+    disableRawMode();
+    clear_term();
+    editorDrawRows();
+
+    disableRawMode();
+    cursor_to_bottom_left();
+    write(STDOUT_FILENO, "\r-- INSERT --", 13);
+
+    initEditor();
+    //writes from STDIN_FILENO
+    enableRawMode();
+    cursor_to_top_left();
+    print_file(writing_buff.buff, writing_buff.len);
+
+    char key;
+    while(1)
+    {
+        read(STDIN_FILENO,&key,1);
+        cmd_key_pressed_buf(writing_buff.buff, key);
+        cursor_to_location(cursor.C_X,cursor.C_Y);
+    }
+}
+
+void normal_mode()
+{
+    fflush(stdout);
+    disableRawMode();
+    clear_term();
+    editorDrawRows();
+
+    enableRawMode();
+    cursor_to_top_left();
+    print_file(writing_buff.buff, writing_buff.len);
+
+    cursor_to_bottom_left();
+    write(STDOUT_FILENO, "\rPress i now to go back to Insertion mode. Press : to start a command.\n\r",72);
+    char c;
+    while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!= 58);
+
+    if(c == 105)
+        insertion_mode();
+    else
+    if(c == 58)
+    {
+        cursor_to_bottom_left();
+        disableRawMode();
+        write(STDOUT_FILENO, "\r                                                                     \r", 71);
+        write(STDOUT_FILENO, &c, 1);
+
+        // ligne de commande
+        char *s = malloc(sizeof(char) * 40);
+        while (read(STDIN_FILENO, s, 40) < 0);
+
+        char **tab;
+        parse_line(s, &tab);
+
+        if (!strcmp(tab[0], "i")) //goes back to Insertion mode
+        {
+            free(s);
+            free(tab);
+            fflush(STDIN_FILENO);
+            enableRawMode();
+            insertion_mode();
+        }
+
+        if (!strcmp(tab[0], "q!"))
+        {
+            free(writing_buff.buff);
+            free(s);
+            free(tab);
+            printf("EXITING\n");
+            fflush(STDIN_FILENO);
+            exit(EXIT_SUCCESS);
+        }
+
+        if (!strcmp(tab[0], "q"))
+        {
+            if(writing_buff.buff[0])
+            {
+                write(STDOUT_FILENO, "Command :q! if you don't want to save.", 38);
+                sleep(1);
+                free(s);
+                free(tab);
+                fflush(STDIN_FILENO);
+                enableRawMode();
+                normal_mode();
+            }
+            else
+            {
+                free(writing_buff.buff);
+                free(s);
+                free(tab);
+                printf("EXITING\n");
+                fflush(STDIN_FILENO);
+                exit(EXIT_SUCCESS);
+            }
+        }
+
+        if (!strcmp(tab[0], "w") && !tab[1])
+        {
+            if(file)
+                write_to_file(file, writing_buff.buff);
+            else
+            {
+                write(STDOUT_FILENO, "Please put a filename after :w.", 30);
+                sleep(1);
+                free(s);
+                free(tab);
+                fflush(STDIN_FILENO);
+                enableRawMode();
+                normal_mode();
+            }
+
+            free(writing_buff.buff);
+            free(s);
+            free(tab);
+
+            printf("SAVED TO %s\n", file);
+            fflush(STDIN_FILENO);
+            exit(EXIT_SUCCESS);
+        }
+
+        if (!strcmp(tab[0], "w") && tab[1])
+        {
+            write_to_file(tab[1], writing_buff.buff);
+
+            free(writing_buff.buff);
+            free(s);
+            free(tab);
+
+            printf("SAVED TO %s\n", tab[1]);
+            fflush(STDIN_FILENO);
+            exit(EXIT_SUCCESS);
+        }
+
+        free(writing_buff.buff);
+        free(s);
+        free(tab);
+
+    }
+}
+
+
 
 int parse_line(char *s, char **argv[])
 {
@@ -90,153 +238,4 @@ int parse_line(char *s, char **argv[])
     argv[0] = tmp;
 
     return len;
-}
-
-void normal_mode()
-{
-    fflush(stdout);
-    disableRawMode();
-    clear_term();
-    editorDrawRows();
-
-    enableRawMode();
-    cursor_to_top_left();
-    print_file(writing_buff.buff, writing_buff.len);
-
-    cursor_to_bottom_left();
-    write(STDOUT_FILENO, "\r                  \r",20);
-    char c;
-    while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!= 58);
-
-    if(c == 105)
-        insertion_mode();
-    else
-    if(c == 58)
-    {
-        disableRawMode();
-        write(STDOUT_FILENO, "\r \r", 3);
-        write(STDOUT_FILENO, &c, 1);
-
-        enableRawMode();
-        // backspace
-        read(STDIN_FILENO,&c,1);
-        if (c == 127)
-        {
-            write(STDOUT_FILENO, "\r \r", 3);
-            insertion_mode();
-        }
-        else {
-            disableRawMode();
-            write(STDOUT_FILENO, &c, 1);
-
-            // ligne de commande
-            char *s = malloc(sizeof(char) * 30);
-            s[0] = c;
-            while (read(STDIN_FILENO, &s[1], 29) < 0);
-
-            char **tab;
-            parse_line(s, &tab);
-
-            if (!strcmp(tab[0], "q!"))
-            {
-                free(writing_buff.buff);
-                free(s);
-                free(tab);
-                //write(STDOUT_FILENO,"\rEXITING\n",10);
-                printf("EXITING\n");
-                fflush(STDIN_FILENO);
-                exit(EXIT_SUCCESS);
-            }
-
-            if (!strcmp(tab[0], "q"))
-            {
-                if(writing_buff.buff[0])
-                {
-                    write(STDOUT_FILENO, "Command :q! if you don't want to save.", 38);
-                    sleep(1);
-                    free(s);
-                    free(tab);
-                    fflush(STDIN_FILENO);
-                    enableRawMode();
-                    normal_mode();
-                }
-                else
-                    {
-                    free(writing_buff.buff);
-                    free(s);
-                    free(tab);
-                    //write(STDOUT_FILENO,"\rEXITING\n",10);
-                    printf("EXITING\n");
-                    fflush(STDIN_FILENO);
-                    exit(EXIT_SUCCESS);
-                }
-            }
-
-            if (!strcmp(tab[0], "w") && !tab[1])
-            {
-                if(file)
-                    write_to_file(file, writing_buff.buff);
-                else
-                    {
-                        write(STDOUT_FILENO, "Please put a filename after :w.", 30);
-                        sleep(1);
-                        free(s);
-                        free(tab);
-                        fflush(STDIN_FILENO);
-                        enableRawMode();
-                        normal_mode();
-                    }
-                free(writing_buff.buff);
-                free(s);
-                free(tab);
-
-                printf("SAVED TO %s\n", file);
-                fflush(STDIN_FILENO);
-                exit(EXIT_SUCCESS);
-            }
-
-            if (!strcmp(tab[0], "w") && tab[1])
-            {
-                write_to_file(tab[1], writing_buff.buff);
-
-                free(writing_buff.buff);
-                free(s);
-                free(tab);
-
-                printf("SAVED TO %s\n", tab[1]);
-                fflush(STDIN_FILENO);
-                exit(EXIT_SUCCESS);
-            }
-
-            free(writing_buff.buff);
-            free(s);
-            free(tab);
-        }
-    }
-}
-
-void insertion_mode()
-{
-    fflush(stdout);
-    disableRawMode();
-    clear_term();
-    editorDrawRows();
-
-    disableRawMode();
-    cursor_to_bottom_left();
-    write(STDOUT_FILENO, "\r-- INSERT --", 13);
-
-    initEditor();
-    //writes from STDIN_FILENO
-    enableRawMode();
-    cursor_to_top_left();
-    print_file(writing_buff.buff, writing_buff.len);
-
-    char key;
-    while(1)
-    {
-        read(STDIN_FILENO,&key,1);
-        cmd_key_pressed_buf(writing_buff.buff, key);
-        cursor_to_location(cursor.C_X,cursor.C_Y);
-    }
 }

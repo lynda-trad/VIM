@@ -56,12 +56,18 @@ int main(int argc, char **argv)
     else
         writing_buff.buff = malloc(sizeof(char) * BUFF_SIZE);
 
-
     enableRawMode();
     choosing_mode();
 
     clear_term();
+    //write(STDOUT_FILENO,"\rENDING\n",9);
+    printf("Ending\n");
+    disableRawMode();
+    exit(EXIT_SUCCESS);
+}
+
 /*
+    clear_term();
     if(current_mode.type == 0)
     {
         if(argc > 1)
@@ -130,9 +136,3 @@ int main(int argc, char **argv)
 
         }
 */
-    clear_term();
-    //write(STDOUT_FILENO,"\rENDING\n",9);
-    printf("Ending\n");
-    disableRawMode();
-    exit(EXIT_SUCCESS);
-}

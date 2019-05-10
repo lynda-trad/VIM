@@ -73,7 +73,14 @@ void cmd_key_pressed_buf(char* buffer, char key)
         break;
 
         default :
-            if (iscntrl(key))
+            if( key == '\r' ) // ENTER == '\n' dans notre texte
+            {
+                key = '\n';
+                write(STDOUT_FILENO,&key,1);
+                writing_buff.buff[writing_buff.len] = key;
+                ++writing_buff.len;
+            }
+            else if (iscntrl(key))
             {
                 write(STDOUT_FILENO,"\r\n",2);
                 //delete_character(key);
@@ -91,6 +98,7 @@ void cmd_key_pressed_buf(char* buffer, char key)
 //Segfault tant qu'on code pas le buffer
 void delete_character(char key)
 {
+// void *memmove(void *dest, const void *src, size_t n);
 
 /*
  *   SUPPR : Erase to the right -> pas égal à 8

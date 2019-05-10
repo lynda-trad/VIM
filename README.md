@@ -12,14 +12,15 @@ Nadeesha Hatharasingha Koditthuwakku Ar     - u21610524
 Participation : 
 
 Lynda : 
+
 - passage du mode canonique au mode non canonique
-- passage du mode Normal au mode Insertion
-- parsing de la commande en mode Normal
-- commandes :q :w et :w fichier en mode Normal
+- passage d'un mode à l'autre
+- gestion du mode normal (parsing et execution de la commande)
 - afficher le fichier en argument
-- detecter backspace et suppr
+- detecter backspace et DEL
 
 Nadeesha :
+
 - détecter quelle flèche a été pressée
 - fonctions pour bouger le curseur dans un fichier donné en argument en mode Insertion
 - afficher le curseur
@@ -27,6 +28,10 @@ Nadeesha :
 
 
 Difficultés rencontrées :
-- le passage du mode normal au mode insertion une fois la ligne de commande commencée.
-- passage du mode insertion au mode normal, on doit presser ECHAP ( c == 27 ),
-cela provoque conflits avec la détection des flèches, on l'a donc remplacé par TAB.
+
+- le passage du mode normal au mode insertion une fois la ligne de commande commencée;
+    solution trouvée : une commande :i pour passer en mode insertion si la commande a commencé.
+
+- passage du mode insertion au mode normal, on doit presser ECHAP ( c == 27 ), cela provoque des
+conflits avec la détection des flèches;
+    solution trouvée : ECHAP est remplacé par TAB.
