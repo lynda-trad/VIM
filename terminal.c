@@ -37,36 +37,6 @@ void editorDrawRows()
         write(STDOUT_FILENO, "~\r\n", 3);
     }
 }
-
-//Gestion du curseur en mode insertion sans fichier donné en argument
-
-void cursor_to_top_left()
-{
-    write(STDOUT_FILENO, "\x1b[H", 3);
-//write(STDOUT_FILENO, "\033[1;1f", 9);
-    cursor.C_X=0;
-    cursor.C_Y=0;
-    writing_buff.cur = 0;
-
-}
-
-void cursor_to_bottom_left()
-{
-    write(STDOUT_FILENO, "\033[42;1f", 9);
-    cursor.C_X = 0;
-    cursor.C_Y = 42;
-    writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-
-    //write(STDOUT_FILENO, "\x1b[0B\x1b[999B", 12);
-    //write(STDOUT_FILENO, "\x1b[00\x1b[999B", 12);
-}
-
-void cursor_to_location(int x, int y)
-{
-    char buf[32];
-    sprintf(buf, "\x1b[%d;%dH",x ,y);
-}
-
 //Gestion du curseur en mode insertion pour un texte déjà affiché (par un fichier donné en argument)
 
 void moveCursorBuf(char *buffer)
@@ -103,6 +73,107 @@ void moveCursorBuf(char *buffer)
     }
 }
 
+void cursor_to_location(int x, int y)
+{
+    char buf[32];
+    sprintf(buf, "\x1b[%d;%dH",x ,y);
+}
+
+void cursor_to_top_left()
+{
+    write(STDOUT_FILENO, "\x1b[H", 3);
+//write(STDOUT_FILENO, "\033[1;1f", 9);
+    cursor.C_X=0;
+    cursor.C_Y=0;
+    writing_buff.cur = 0;
+
+}
+
+void cursor_to_bottom_left()
+{
+    write(STDOUT_FILENO, "\033[42;1f", 9);
+    cursor.C_X = 0;
+    cursor.C_Y = 42;
+    writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+
+    //write(STDOUT_FILENO, "\x1b[0B\x1b[999B", 12);
+    //write(STDOUT_FILENO, "\x1b[00\x1b[999B", 12);
+}
+
+//Monter d'une ligne dans un texte affiché
+void cursor_to_top(char* buffer)
+{
+    if(cursor.C_X > 0 && cursor.C_X < WIN_X)
+    {
+        cursor.C_X--;
+        sprintf(buffer, "\x1b[%d;%dH", cursor.C_X, cursor.C_Y);
+// 		color_cursor(buffer);
+        print_file(buffer, get_amount_lines(buffer));
+
+        writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+    }
+}
+
+//Descendre d'une ligne dans un texte affiché
+void cursor_to_bottom(char* buffer)
+{
+    if(cursor.C_X > 0 && cursor.C_X < WIN_X)
+    {
+        cursor.C_X++;
+        sprintf(buffer, "\x1b[%d;%dH", cursor.C_X, cursor.C_Y);
+// 		color_cursor(buffer);
+        print_file(buffer, get_amount_lines(buffer));
+
+        writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+    }
+}
+
+//Se déplacer d'un caractère/d'une colonne à droite dans un texte affiché
+void cursor_to_right(char* buffer)
+{
+    if(cursor.C_Y > 0 && cursor.C_Y < WIN_Y)
+    {
+        cursor.C_Y++;
+        sprintf(buffer, "\x1b[%d;%dH", cursor.C_X, cursor.C_Y);
+// 		color_cursor(buffer);
+        print_file(buffer, get_amount_lines(buffer));
+
+        writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+    }
+}
+
+//Se déplacer d'un caractère/d'une colonne à gauche dans un texte affiché
+void cursor_to_left(char* buffer)
+{
+    if(cursor.C_Y > 0 && cursor.C_Y < WIN_Y)
+    {
+        cursor.C_Y--;
+        sprintf(buffer, "\x1b[%d;%dH", cursor.C_X, cursor.C_Y);
+// 		color_cursor(buffer);
+        print_file(buffer, get_amount_lines(buffer));
+
+        writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+    }
+}
+
+//Mettre le curseur à la position (x,y) dans le texte affiché
+void cursor_to_location_buf(char* buffer, int x, int y)
+{
+    if(x > 0 && x < WIN_X && y > 0 && y < WIN_Y)
+    {
+        sprintf(buffer, "\x1b[%d;%dH", x, y);
+//      color_cursor(buffer);
+        cursor.C_X = x;
+        cursor.C_Y = y;
+        print_file(buffer, get_amount_lines(buffer));
+
+        writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+    }
+}
+
+
+//Tentative de détecter fin des lignes pour ne pas laisser le curseur flotter dans le vide
+/*
 //Monter d'une ligne dans un texte affiché
 void cursor_to_top(char* buffer)
 {	
@@ -253,8 +324,9 @@ void cursor_to_location_buf(char* buffer, int x, int y)
 
 
 //Colorier uniquement l'arrière-plan du caractère situé à la position courante du texte
-/*void color_cursor(char* buffer)
+void color_cursor(char* buffer)
 {
 	sprintf(buffer, "\x1b[91m%s", acolorier);
 }
+
 */

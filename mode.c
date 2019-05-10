@@ -20,7 +20,7 @@
 
 void choosing_mode()
 {
-    write(STDOUT_FILENO,"Press i to enter Insertion mode. Press ESCAPE to enter Normal mode.\n", 68);
+    write(STDOUT_FILENO,"Press i to enter Insertion mode. Press TAB to enter Normal mode.\n", 68);
     unsigned char c;
     while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!=27 );
     fflush(stdout);
@@ -216,5 +216,3 @@ void insertion_mode()
         cursor_to_location(cursor.C_X,cursor.C_Y);
     }
 }
-
-//git commit -am "EDIT: insertion_mode() pour reafficher le buffer quand on passe de normal a insertion"
