@@ -151,7 +151,7 @@ void delete_character(char key)
 		    print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
 
 		    cursor.C_Y--;
-            writing_buff.cur--;
+              writing_buff.cur--;
 		    writing_buff.len--;
 	    }
         else if(key == 126) // ~ tilde a la fin de SUPPR
@@ -237,6 +237,71 @@ unsigned int get_amount_lines(const char *s)
 
     return i;
 }
+
+unsigned int get_line(const char* buffer, unsigned int pos)
+{
+	unsigned int i;
+	unsigned int line;
+	i = 0;
+	line = 0;
+	
+	while (i != pos)
+    {
+		if(buffer[i] == '\n')
+		{
+			line++;
+		}
+		i++;
+    }
+	return line;
+}
+
+unsigned int get_amount_characters_in_line(const char* buffer, unsigned int line)
+{
+    unsigned int nb_char_line;
+    unsigned int l;
+    unsigned int i;
+
+    nb_char_line = 0;
+    l = 0;
+    i = 0;
+
+//On récupère l'indice i du buffer à partir duquel buffer[i] se trouve au dernier caractère de la ligne line-1
+    while (l != line)
+    {
+	    while(buffer[i] != '\n')
+	    {
+			i++;
+	    }
+		i++;
+	    l++;
+    }
+	while(buffer[i] != '\n')
+	{
+		i++;
+		nb_char_line++;
+	}
+//Pour le dernier caractère	
+	nb_char_line++;
+	
+    return nb_char_line;
+    
+}
+
+unsigned int get_pos_cur_buffer(unsigned int x, unsigned int y)
+{
+// Indice position courante buffer= somme du nombre de caractère par ligne (donc cursor.C_Y* nb de caractère dans la ligne) + nb de colonnes de la dernière ligne( cursor.C_X) +1
+	unsigned int somme;
+	somme = 0;
+	for(unsigned int i=0; i<y; i++){
+		somme= somme + get_amount_characters_in_line(writing_buff.buff,i);
+	}
+	somme= somme + x + 1;
+	
+	return somme;
+
+}
+		
 
 void print_file(const char *s, unsigned int n)
 {

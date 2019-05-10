@@ -26,6 +26,12 @@ char *get_file(const char *path);
 
 unsigned int get_amount_lines(const char *s);
 
+unsigned int get_line(const char* buffer, unsigned int pos);
+
+unsigned int get_amount_characters_in_line( const char* buffer, unsigned int line);
+
+unsigned int get_pos_cur_buffer(unsigned int x, unsigned int y);
+
 void print_file(const char *s, unsigned int n);
 
 int write_to_file(const char *path, const char *str);

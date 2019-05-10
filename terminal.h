@@ -6,8 +6,8 @@
 
 typedef struct
 {
-     int C_X;
-     int C_Y;
+    unsigned int C_X; // Colonnes--> Max 90
+    unsigned int C_Y; // Lignes--> Max 40
 } cursor_t;
 
 //cursor coordinates
