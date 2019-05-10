@@ -1,8 +1,10 @@
 #ifndef CLONE_TERMINAL_H
 #define CLONE_TERMINAL_H
 
-#define WIN_X 90
-#define WIN_Y 42
+#include <termios.h>
+
+#define WIN_X 120
+#define WIN_Y 80
 
 typedef struct
 {
@@ -13,7 +15,11 @@ typedef struct
 //cursor coordinates
 cursor_t cursor;
 
-void initEditor();
+struct termios old_t;
+
+void disableRawMode();
+
+void enableRawMode();
 
 void clear_term();
 

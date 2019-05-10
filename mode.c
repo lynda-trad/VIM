@@ -43,6 +43,7 @@ void change_mode(unsigned char c)
             break;
     }
 }
+
 void insertion_mode()
 {
     fflush(stdout);
@@ -59,13 +60,13 @@ void insertion_mode()
     enableRawMode();
     cursor_to_top_left();
     print_file(writing_buff.buff, writing_buff.len);
+    cursor_to_top_left();
 
     char key;
     while(1)
     {
         read(STDIN_FILENO,&key,1);
         cmd_key_pressed_buf(writing_buff.buff, key);
-        cursor_to_location(cursor.C_X,cursor.C_Y);
     }
 }
 

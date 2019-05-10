@@ -36,7 +36,7 @@ void die(const char *s)
 int main(int argc, char **argv)
 {
     //windows resize
-    //xterm -geometry 90x40
+    //xterm -geometry 120x80
 
     //ignores CTRL+C
     struct sigaction act;

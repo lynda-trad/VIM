@@ -1,7 +1,6 @@
 #ifndef CLONE_EDITOR_H
 #define CLONE_EDITOR_H
 
-#include <termios.h>
 
 #define BUFF_SIZE 1024
 
@@ -14,9 +13,7 @@ typedef struct
 
 buff_t writing_buff;
 
-void disableRawMode();
-
-void enableRawMode();
+void initEditor();
 
 void cmd_key_pressed_buf( char* buffer, char key);
 

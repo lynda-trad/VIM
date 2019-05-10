@@ -15,11 +15,33 @@
 #include "editor.h"
 #include "terminal.h"
 
-void initEditor()
+void disableRawMode()
 {
-    cursor.C_X = 0;
-    cursor.C_Y = 0;
-    writing_buff.cur = 0;
+    //disables raw mode
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &old_t) == -1)
+        die("tcsetattr failed : disableRawMode()");
+}
+
+void enableRawMode()
+{
+    //enables raw mode
+    tcgetattr(STDIN_FILENO, &old_t);
+    atexit(disableRawMode);
+
+    struct termios new_t = old_t;
+
+    // disables echoeing, canonical mode and CTRL+V
+    new_t.c_lflag &= ~(ICANON | ECHO | IEXTEN);
+
+    // disables CTRL+S, CTRL+Q and CTRL+M
+    new_t.c_iflag &= ~(IXON | ICRNL);
+
+    //other flags
+    new_t.c_iflag &= ~(BRKINT | INPCK | ISTRIP);
+    new_t.c_cflag |= (CS8);
+
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &new_t) == -1)
+        die("tcsetattr failed : enableRawMode()");
 }
 
 void clear_term()
@@ -33,10 +55,11 @@ void editorDrawRows()
     //draws the line of tildes like vim
     int y;
 
-    for (y = 0; y < WIN_Y-2; y++) {
+    for (y = 0; y < WIN_Y-10; y++) {
         write(STDOUT_FILENO, "~\r\n", 3);
     }
 }
+
 //Gestion du curseur en mode insertion pour un texte déjà affiché (par un fichier donné en argument)
 
 void moveCursorBuf(char *buffer)
@@ -84,27 +107,23 @@ void cursor_to_top_left()
     write(STDOUT_FILENO, "\x1b[H", 3);
 //  write(STDOUT_FILENO, "\033[1;1f", 9);
 
-    cursor.C_X       = 0;
-    cursor.C_Y       = 0;
+    cursor.C_X       = 1;
+    cursor.C_Y       = 1;
     writing_buff.cur = 0;
 }
 
 void cursor_to_bottom_left()
 {
-    write(STDOUT_FILENO, "\033[42;1f", 9);
-    cursor.C_X = 0;
-    cursor.C_Y = 40;
-
+    write(STDOUT_FILENO, "\033[75;1f", 9);
+    cursor.C_X = 1;
+    cursor.C_Y = 75;
     //writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-
-    //write(STDOUT_FILENO, "\x1b[0B\x1b[999B", 12);
-    //write(STDOUT_FILENO, "\x1b[00\x1b[999B", 12);
 }
 
 //Monter d'une ligne dans un texte affiché
 void cursor_to_top(char* buffer)
 {
-    if(cursor.C_X > 0 && cursor.C_X < WIN_X)
+    if(cursor.C_X >= 1 && cursor.C_X < WIN_X)
     {
         cursor.C_X--;
         sprintf(buffer, "\x1b[%d;%dH", cursor.C_X, cursor.C_Y);
@@ -120,7 +139,7 @@ void cursor_to_top(char* buffer)
 //Descendre d'une ligne dans un texte affiché
 void cursor_to_bottom(char* buffer)
 {
-    if(cursor.C_X > 0 && cursor.C_X < WIN_X)
+    if(cursor.C_X >= 1 && cursor.C_X < WIN_X)
     {
         cursor.C_X++;
         sprintf(buffer, "\x1b[%d;%dH", cursor.C_X, cursor.C_Y);
@@ -136,7 +155,7 @@ void cursor_to_bottom(char* buffer)
 //Se déplacer d'un caractère/d'une colonne à droite dans un texte affiché
 void cursor_to_right(char* buffer)
 {
-    if(cursor.C_Y > 0 && cursor.C_Y < WIN_Y)
+    if(cursor.C_Y >= 1 && cursor.C_Y < WIN_Y)
     {
         cursor.C_Y++;
         sprintf(buffer, "\x1b[%d;%dH", cursor.C_X, cursor.C_Y);
@@ -152,7 +171,7 @@ void cursor_to_right(char* buffer)
 //Se déplacer d'un caractère/d'une colonne à gauche dans un texte affiché
 void cursor_to_left(char* buffer)
 {
-    if(cursor.C_Y > 0 && cursor.C_Y < WIN_Y)
+    if(cursor.C_Y >= 1 && cursor.C_Y < WIN_Y)
     {
         cursor.C_Y--;
         sprintf(buffer, "\x1b[%d;%dH", cursor.C_X, cursor.C_Y);
@@ -168,7 +187,7 @@ void cursor_to_left(char* buffer)
 //Mettre le curseur à la position (x,y) dans le texte affiché
 void cursor_to_location_buf(char* buffer, int x, int y)
 {
-    if(x > 0 && x < WIN_X && y > 0 && y < WIN_Y)
+    if(x >= 1 && x < WIN_X && y >= 1 && y < WIN_Y)
     {
         sprintf(buffer, "\x1b[%d;%dH", x, y);
 
