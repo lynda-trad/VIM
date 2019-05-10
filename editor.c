@@ -54,7 +54,7 @@ void cmd_key_pressed_buf(char* buffer, char key)
                 ++writing_buff.len;
             }
             else if (iscntrl(key))
-            { // CTRL V
+            { // ignores CTRL V
                 //write(STDOUT_FILENO,"\r\n",2);
             }
             else
@@ -63,79 +63,70 @@ void cmd_key_pressed_buf(char* buffer, char key)
                 writing_buff.buff[writing_buff.len] = key;
                 ++writing_buff.cur;
                 ++writing_buff.len;
+
+            /*
+                if(file)
+                {
+                    write(STDOUT_FILENO, &key, 1);
+
+                    //decallage du reste
+                    memmove(&writing_buff.cur + 2, &writing_buff.cur + 1, writing_buff.len - writing_buff.cur);
+
+                    //on met le nouveau char a la position
+                    writing_buff.buff[writing_buff.cur] = key;
+                    ++writing_buff.len;
+                }
+                else
+                    if(!file)
+                {
+             }
+            */
+
             }
         break;
     }
 }
 
-//Segfault tant qu'on code pas le buffer
 void delete_character(char key)
 {
-// void *memmove(void *dest, const void *src, size_t n);
+    //backspace
 
-/*
- *   SUPPR : Erase to the right -> pas égal à 8
- *   ^[[3~
- *   27 + [ + 3 + ~
- *   case 27 : commence comme flèches
- *   mais a la place de A B C D c'est 3~
- *
- *  BACKSPACE : Erase to the left
- *      read(STDIN_FILENO, &c, 1);
- *      c == 127 == backspace
- * */
+    /* // EXEMPLE
+    if (key == 127)
+    {
+        memmove(&writing_buff.buff[5], &writing_buff.buff[6], writing_buff.len - 6);
+        writing_buff.buff[writing_buff.len] = 0;
+        --cursor.C_X;
+        --writing_buff.cur;
+        --writing_buff.len;
 
-//      key = BACKSPACE ; Erase to the left
-        if (key == 127)
-        {
-    		char* new_buff = malloc(sizeof(writing_buff.buff)-1);
-	    	unsigned int i;
+        print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+    }
+    */
 
-//      On copie tout ce qui est avant le curseur
+    if (key == 127)
+    {
+        memmove(&writing_buff.buff[writing_buff.cur - 1], &writing_buff.buff[writing_buff.cur], writing_buff.len - writing_buff.cur);
 
-		    for(i = 0; i < writing_buff.cur; i++)
-		    {
-			    new_buff[i] = writing_buff.buff[i];
-		    }
+        writing_buff.buff[writing_buff.len] = 0;
 
-//      On copie tout ce qui est juste après le curseur pour supprimer le caractère qui est actuellement dans le curseur
+        --cursor.C_Y;
+        --writing_buff.cur;
+        --writing_buff.len;
 
-            for(unsigned int j = writing_buff.cur + 1; j< writing_buff.len; j++)
-		    {
-    		    new_buff[i+1] = writing_buff.buff[j];
-	    	}
+        print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+    }
+    if (key == '~')
+    {
+        memmove(&writing_buff.buff[writing_buff.cur + 1], &writing_buff.buff[writing_buff.cur + 2], writing_buff.len - writing_buff.cur);
 
-		    writing_buff.buff = new_buff;
-		    print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+        writing_buff.buff[writing_buff.len] = 0;
 
-		    cursor.C_Y--;
-              writing_buff.cur--;
-		    writing_buff.len--;
-	    }
-        else if(key == 126) // ~ ==  SUPPR
-        {
-            char* new_buff = malloc(sizeof(writing_buff.buff)-1);
-            unsigned int i;
+        --writing_buff.len;
 
-//      On copie tout ce qui est avant le curseur, inclus
+        print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+    }
 
-            for(i = 0; i < writing_buff.cur + 1; i++)
-            {
-                new_buff[i] = writing_buff.buff[i];
-            }
-
-//      On copie tout ce qui est après le char qu'on veut supprimer, il est juste après le curseur
-
-            for(unsigned int j = writing_buff.cur + 2; j< writing_buff.len; j++)
-            {
-                new_buff[i+1] = writing_buff.buff[j];
-            }
-
-            writing_buff.buff = new_buff;
-            print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
-
-            writing_buff.len--;
-        }
 }
 
 char *get_file(const char *path)
@@ -255,7 +246,7 @@ unsigned int get_pos_cur_buffer(unsigned int x, unsigned int y)
 // Indice position courante buffer = somme du nombre de caractère par ligne (donc cursor.C_Y * nb de caractère dans la ligne) + nb de colonnes de la dernière ligne (cursor.C_X) +1
 	unsigned int somme;
 	somme = 0;
-	for(unsigned int i = 0; i<y; i++)
+	for(unsigned int i = 1; i < y; i++)
 	{
 		somme = somme + get_amount_characters_in_line(writing_buff.buff,i);
 	}

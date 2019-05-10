@@ -132,7 +132,8 @@ void cursor_to_top(char* buffer)
 
         print_file(buffer, get_amount_lines(buffer));
 
-        writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+        writing_buff.cur -= WIN_X;
+        //writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
     }
 }
 
@@ -148,7 +149,8 @@ void cursor_to_bottom(char* buffer)
 
         print_file(buffer, get_amount_lines(buffer));
 
-        writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+        writing_buff.cur += WIN_X;
+        //writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
     }
 }
 
@@ -164,7 +166,8 @@ void cursor_to_right(char* buffer)
 
         print_file(buffer, get_amount_lines(buffer));
 
-        writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+        ++writing_buff.cur;
+        //writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
     }
 }
 
@@ -180,7 +183,8 @@ void cursor_to_left(char* buffer)
 
         print_file(buffer, get_amount_lines(buffer));
 
-        writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+        --writing_buff.cur;
+        //writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
     }
 }
 
