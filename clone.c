@@ -60,15 +60,8 @@ int main(int argc, char **argv)
     enableRawMode();
     choosing_mode();
 
-    //checking
-    if(current_mode.type == 0)
-        write(STDOUT_FILENO,"\nINSERTION\n", 11);
-    else
-    if(current_mode.type == 1)
-        write(STDOUT_FILENO,"\nNORMAL\n",8);
-
     clear_term();
-
+/*
     if(current_mode.type == 0)
     {
         if(argc > 1)
@@ -135,35 +128,8 @@ int main(int argc, char **argv)
         {
             normal_mode();
 
-            /*
-            disableRawMode();
-            clear_term();
-            editorDrawRows();
-            cursor_to_top_left();
-            cursor_to_bottom_left();
-            write(STDOUT_FILENO, "\r \r", 3);
-
-            char *s = malloc(sizeof(char) * 30);
-            while (read(STDIN_FILENO, s, 30) < 0);
-
-            char **tab;
-            parse_line(s, &tab);
-
-            if (!strcmp(tab[0], ":q"))
-            {
-                free(s);
-                free(tab);
-                //write(STDOUT_FILENO,"\rEXITING\n",10);
-                printf("EXITING\n");
-                fflush(STDIN_FILENO);
-                exit(EXIT_SUCCESS);
-            }
-
-            free(s);
-            free(tab);
-            */
         }
-
+*/
     clear_term();
     //write(STDOUT_FILENO,"\rENDING\n",9);
     printf("Ending\n");

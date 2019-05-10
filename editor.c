@@ -60,9 +60,10 @@ void cmd_key_pressed_buf(char* buffer, char key)
 
     switch(key)
     {
-        case 9: //ECHAP ( en vrai TAB )
+        case 9: //TAB pour passer en mode Normal
             normal_mode();
         break;
+
         case 127:
             delete_character(key);
         break;
@@ -85,30 +86,6 @@ void cmd_key_pressed_buf(char* buffer, char key)
             }
         break;
     }
-
-    /*
-    if(key == 127 )
-    {// backspace
-        delete_character(key);
-    }
-    else
-    if (key == 27)
-    {
-        moveCursorBuf(buffer);
-    }
-    else
-    {
-        if (iscntrl(key))
-        {
-            write(STDOUT_FILENO,"\r\n",2);
-	        //delete_character(key);
-        }
-        else
-        {
-            write(STDOUT_FILENO,&key,1);
-        }
-    }
-     */
 }
 
 //Segfault tant qu'on code pas le buffer
@@ -180,7 +157,6 @@ void delete_character(char key)
         }
 }
 
-
 char *get_file(const char *path)
 {
     char *ret;
@@ -207,7 +183,9 @@ char *get_file(const char *path)
     close(fd);
 
     ret[all_r] = '\0';
+
     writing_buff.len = all_r;
+
     return ret;
 }
 
@@ -276,11 +254,13 @@ unsigned int get_amount_characters_in_line(const char* buffer, unsigned int line
 		i++;
 	    l++;
     }
+
 	while(buffer[i] != '\n')
 	{
 		i++;
 		nb_char_line++;
 	}
+
 //Pour le dernier caractère	
 	nb_char_line++;
 	
@@ -290,16 +270,16 @@ unsigned int get_amount_characters_in_line(const char* buffer, unsigned int line
 
 unsigned int get_pos_cur_buffer(unsigned int x, unsigned int y)
 {
-// Indice position courante buffer= somme du nombre de caractère par ligne (donc cursor.C_Y* nb de caractère dans la ligne) + nb de colonnes de la dernière ligne( cursor.C_X) +1
+// Indice position courante buffer = somme du nombre de caractère par ligne (donc cursor.C_Y * nb de caractère dans la ligne) + nb de colonnes de la dernière ligne (cursor.C_X) +1
 	unsigned int somme;
 	somme = 0;
-	for(unsigned int i=0; i<y; i++){
-		somme= somme + get_amount_characters_in_line(writing_buff.buff,i);
+	for(unsigned int i = 0; i<y; i++)
+	{
+		somme = somme + get_amount_characters_in_line(writing_buff.buff,i);
 	}
-	somme= somme + x + 1;
+	somme = somme + x + 1;
 	
 	return somme;
-
 }
 		
 
@@ -329,6 +309,7 @@ int write_to_file(const char *path, const char *str)
     if ((fd = open(path, O_CREAT|O_RDWR|O_TRUNC, 0644)) > 0)
     {
         write(fd, str, strlen(str) + 1);
+        write(fd, "\0", 1);
         close(fd);
         return 0;
     }

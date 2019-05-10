@@ -20,25 +20,24 @@
 
 void choosing_mode()
 {
+    //where you choose the mode
     write(STDOUT_FILENO,"Press i to enter Insertion mode. Press TAB to enter Normal mode.\n", 68);
     unsigned char c;
     while (read(STDIN_FILENO, &c, 1) == 1 && c != 105 && c!=27 );
     fflush(stdout);
-    change_mode(c, &current_mode);
+    change_mode(c);
 }
 
-void change_mode(unsigned char c, struct mode_s *m)
+void change_mode(unsigned char c)
 {
     //goes from Insertion mode to Normal mode or vice versa
     switch(c)
     {
         case 105 :
-            m->type = INSERT;
-//            insertion_mode();
+            insertion_mode();
             break;
         case 27 :
-            m->type = NORMAL;
-//            normal_mode();
+            normal_mode();
             break;
     }
 }
@@ -138,14 +137,39 @@ void normal_mode()
             char **tab;
             parse_line(s, &tab);
 
-            if (!strcmp(tab[0], "q"))
+            if (!strcmp(tab[0], "q!"))
             {
+                free(writing_buff.buff);
                 free(s);
                 free(tab);
                 //write(STDOUT_FILENO,"\rEXITING\n",10);
                 printf("EXITING\n");
                 fflush(STDIN_FILENO);
                 exit(EXIT_SUCCESS);
+            }
+
+            if (!strcmp(tab[0], "q"))
+            {
+                if(writing_buff.buff[0])
+                {
+                    write(STDOUT_FILENO, "Command :q! if you don't want to save.", 38);
+                    sleep(1);
+                    free(s);
+                    free(tab);
+                    fflush(STDIN_FILENO);
+                    enableRawMode();
+                    normal_mode();
+                }
+                else
+                    {
+                    free(writing_buff.buff);
+                    free(s);
+                    free(tab);
+                    //write(STDOUT_FILENO,"\rEXITING\n",10);
+                    printf("EXITING\n");
+                    fflush(STDIN_FILENO);
+                    exit(EXIT_SUCCESS);
+                }
             }
 
             if (!strcmp(tab[0], "w") && !tab[1])

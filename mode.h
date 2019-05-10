@@ -1,22 +1,10 @@
 #ifndef CLONE_MODE_H
 #define CLONE_MODE_H
 
-struct mode_s current_mode;
-
-enum mode_t
-{
-    INSERT ,
-    NORMAL
-};
-
-struct mode_s
-{
-    mode_t type;
-};
 
 void choosing_mode();
 
-void change_mode(unsigned char c, struct mode_s *m);
+void change_mode(unsigned char c);
 
 void normal_mode();
 
