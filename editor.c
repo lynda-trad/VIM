@@ -91,7 +91,7 @@ void delete_character(char key)
 {
     //backspace
 
-    /* // EXEMPLE
+ /*    // EXEMPLE
     if (key == 127)
     {
         memmove(&writing_buff.buff[5], &writing_buff.buff[6], writing_buff.len - 6);
@@ -100,35 +100,36 @@ void delete_character(char key)
         --writing_buff.cur;
         --writing_buff.len;
 
-        print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
-    }
-    */
+		    sprintf(writing_buff.buff, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+		    print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+    }*/
+    
 
     if (key == 127)
     {
+		writing_buff.cur=get_pos_cur_buffer(cursor.C_X,cursor.C_Y); // avec cette fonction ça ne fait plus segfault et on voit bien le curseur reculer mais efface toujours pas
         memmove(&writing_buff.buff[writing_buff.cur - 1], &writing_buff.buff[writing_buff.cur], writing_buff.len - writing_buff.cur);
 
         writing_buff.buff[writing_buff.len] = 0;
-
-        --cursor.C_Y;
+        --cursor.C_X;
         --writing_buff.cur;
         --writing_buff.len;
-
+	   sprintf(writing_buff.buff, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);//affiche le curseur
         print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+
     }
     if (key == '~')
     {
+		writing_buff.cur=get_pos_cur_buffer(cursor.C_X,cursor.C_Y);
         memmove(&writing_buff.buff[writing_buff.cur + 1], &writing_buff.buff[writing_buff.cur + 2], writing_buff.len - writing_buff.cur);
-
         writing_buff.buff[writing_buff.len] = 0;
-
+ 	   sprintf(writing_buff.buff, "\x1b[K"); // pas bon mais commande qui permet d'effacer toute la ligne depuis la position courante...
         --writing_buff.len;
-
+// 	   sprintf(writing_buff.buff, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X); //affiche le curseur
         print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
     }
 
 }
-
 char *get_file(const char *path)
 {
     char *ret;
@@ -194,7 +195,7 @@ unsigned int get_line(const char* buffer, unsigned int pos)
 	unsigned int i;
 	unsigned int line;
 	i = 0;
-	line = 0;
+	line = 1;
 	
 	while (i != pos)
     {
@@ -214,7 +215,7 @@ unsigned int get_amount_characters_in_line(const char* buffer, unsigned int line
     unsigned int i;
 
     nb_char_line = 0;
-    l = 0;
+    l = 1;
     i = 0;
 
 //On récupère l'indice i du buffer à partir duquel buffer[i] se trouve au dernier caractère de la ligne line-1
@@ -234,7 +235,7 @@ unsigned int get_amount_characters_in_line(const char* buffer, unsigned int line
 		nb_char_line++;
 	}
 
-//Pour le dernier caractère	
+//Pour le dernier caractère'\n'
 	nb_char_line++;
 	
     return nb_char_line;
@@ -243,7 +244,7 @@ unsigned int get_amount_characters_in_line(const char* buffer, unsigned int line
 
 unsigned int get_pos_cur_buffer(unsigned int x, unsigned int y)
 {
-// Indice position courante buffer = somme du nombre de caractère par ligne (donc cursor.C_Y * nb de caractère dans la ligne) + nb de colonnes de la dernière ligne (cursor.C_X) +1
+// Indice position courante buffer = somme du nombre de caractère par ligne  + nb de colonnes de la dernière ligne (cursor.C_X) +1
 	unsigned int somme;
 	somme = 0;
 	for(unsigned int i = 1; i < y; i++)
