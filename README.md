@@ -25,16 +25,18 @@ Lynda :
 Nadeesha :
 
 - détecter quelle flèche a été pressée
-- fonctions pour bouger le curseur dans un fichier donné en argument en mode Insertion
+- fonctions pour bouger le curseur dans un fichier en mode Insertion 
+- fonctions pour avoir la position courante ou le nombre de caractères dans une ligne du buffer.
 - afficher le curseur
 - comportement du buffer et du curseur si on presse backspace et suppr
+- début de la mise en place du curseur de la souris
 
 
 Difficultés rencontrées :
 
 - le passage du mode normal au mode insertion une fois la ligne de commande commencée;
     solution trouvée : une commande :i pour passer en mode insertion si la commande a commencé.
-
 - passage du mode insertion au mode normal, on doit presser ECHAP ( c == 27 ), cela provoque des
 conflits avec la détection des flèches;
     solution trouvée : ECHAP est remplacé par TAB.
+- le curseur ne s'arrete pas en bout de ligne 
