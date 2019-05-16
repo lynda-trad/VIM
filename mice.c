@@ -32,7 +32,7 @@ int update_mouse(){
 	mouse.C_Y += mice_data[2];
 	return 0;
 }
-/*
+
 int main(){
 	int fd, bytes;
     const char *pDevice = "/dev/input/mice";
@@ -73,7 +73,7 @@ int main(){
 	return 0;
 }
 	
-*/
+/*
 
 int main()
 {
@@ -83,7 +83,7 @@ int main()
     const char *pDevice = "/dev/input/mice";
 
 // Open Mouse
-    fd = open(pDevice, O_RDWR| O_NONBLOCK);
+    fd = open(pDevice, O_RDWR);
     if (fd == -1) {
         printf("ERROR Opening %s\n", pDevice);
         return -1;
@@ -111,3 +111,4 @@ int main()
 
     exit(0);
 }
+*/
