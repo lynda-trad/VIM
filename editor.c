@@ -121,8 +121,10 @@ void delete_character(char key)
     //backspace
     if (key == 127)
     {
-        if(file)
+        /*
+         if(file)
         {
+         */
             writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 
             if (writing_buff.cur <= writing_buff.len && writing_buff.cur > 0)
@@ -148,6 +150,7 @@ void delete_character(char key)
                 cursor_to_location_buf(cx, cy);
                 print_cursor();
             }
+            /*
         }
         else
         {
@@ -162,6 +165,7 @@ void delete_character(char key)
                 print_cursor();
             }
         }
+             */
     }
     //delete
     if (key == '~')
