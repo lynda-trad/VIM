@@ -57,75 +57,61 @@ void cmd_key_pressed_buf(char* buffer, char key)
                     if( key == '\r' ) // ENTER == '\n' dans notre texte
                         key = '\n';
 
-                    write(STDOUT_FILENO,&key,1);
-                    writing_buff.buff[writing_buff.cur] = key;
-                    ++writing_buff.cur;
-                    ++writing_buff.len;
+                    add_character(key);
                 }
                 else
                 {
-                    if( key == '\r' ) // ENTER == '\n' dans notre texte
+                    if (key == '\r') // ENTER == '\n' dans notre texte
                         key = '\n';
 
-                    //decallage des char dans le buffer
-                    writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-                    unsigned int cx = cursor.C_X;
-                    unsigned int cy = cursor.C_Y;
-
-                    //incremente
-                    ++writing_buff.len;
-
-                    memmove(&writing_buff.buff[writing_buff.cur + 2], &writing_buff.buff[writing_buff.cur + 1],
-                                                        writing_buff.len - writing_buff.cur);
-
-                    //on met le nouveau char a la position
-                    writing_buff.buff[writing_buff.cur] = key;
-
-                    //print le nouveau texte
-                    clear_term();
-                    editorDrawRows();
-                    cursor_to_top_left();
-                    print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
-
-                    //on replace le curseur la ou on est
-                    cursor_to_location_buf(cx, cy);
-                    increment_cursor();
-                    print_cursor();
+                    if (writing_buff.cur > writing_buff.len)
+                    {
+                        add_character(key);
+                    }
+                    else
+                    {
+                        add_character_file(key);
+                    }
                 }
-
-                /*
-                write(STDOUT_FILENO,&key,1);
-
-                memmove(&writing_buff.buff[writing_buff.cur + 1], &writing_buff.buff[writing_buff.cur], writing_buff.len - writing_buff.cur);
-
-                writing_buff.buff[writing_buff.cur] = key;
-
-                increment_cursor();
-
-                ++writing_buff.cur;
-                ++writing_buff.len;
-                */
-
-                /*
-                if(file)
-                {
-                    write(STDOUT_FILENO, &key, 1);
-
-                    //decallage du reste
-                    memmove(&writing_buff.buff[writing_buff.cur + 1], &writing_buff.buff[writing_buff.cur], writing_buff.len - writing_buff.cur);
-
-                    //on met le nouveau char a la position
-                    writing_buff.buff[writing_buff.cur] = key;
-
-                    increment_cursor();
-
-                    ++writing_buff.cur;
-                    ++writing_buff.len;
-                }
-                 */
             }
         break;
     }
+}
+
+void add_character(char key)
+{
+    write(STDOUT_FILENO,&key,1);
+    writing_buff.buff[writing_buff.cur] = key;
+    ++writing_buff.cur;
+    ++writing_buff.len;
+}
+
+void add_character_file(char key)
+{
+    //decallage des char dans le buffer
+    writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+    unsigned int cx = cursor.C_X;
+    unsigned int cy = cursor.C_Y;
+
+    //incremente
+    ++writing_buff.len;
+
+    memmove(&writing_buff.buff[writing_buff.cur-1], &writing_buff.buff[writing_buff.cur-2],
+            writing_buff.len - (writing_buff.cur-2));
+
+    //on met le nouveau char a la position
+    writing_buff.buff[writing_buff.cur-1] = key;
+
+    //print le nouveau texte
+    clear_term();
+    editorDrawRows();
+    cursor_to_top_left();
+    print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+
+    //on replace le curseur la ou on est
+    cursor_to_location_buf(cx, cy);
+    increment_cursor();
+    print_cursor();
 }
 
 void delete_character(char key)

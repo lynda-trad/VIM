@@ -19,6 +19,10 @@ void initEditor();
 
 void cmd_key_pressed_buf( char* buffer, char key);
 
+void add_character(char key);
+
+void add_character_file(char key);
+
 void delete_character(char key);
 
 char *get_file(const char *path);
