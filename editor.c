@@ -139,7 +139,7 @@ void delete_character(char key)
     if (key == '~')
     {
 		writing_buff.cur = get_pos_cur_buffer(cursor.C_X,cursor.C_Y);
-        memmove(&writing_buff.buff[writing_buff.cur + 1], &writing_buff.buff[writing_buff.cur + 2], writing_buff.len - (writing_buff.cur + 2));
+        memmove(&writing_buff.buff[writing_buff.cur-2], &writing_buff.buff[writing_buff.cur-1], writing_buff.len - (writing_buff.cur-2));
 
         writing_buff.buff[writing_buff.len] = 0;
 
