@@ -113,12 +113,6 @@ void increment_cursor()
     writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 }
 
-void cursor_to_location(int x, int y)
-{
-    char buf[32];
-    sprintf(buf, "\x1b[%d;%dH",x ,y);
-}
-
 void cursor_to_top_left()
 {
     write(STDOUT_FILENO, "\x1b[H", 3);
@@ -134,7 +128,6 @@ void cursor_to_bottom_left()
     write(STDOUT_FILENO, "\033[75;1f", 9);
     cursor.C_X = 1;
     cursor.C_Y = 75;
-    //writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 }
 
 //Monter d'une ligne dans un texte affiché
@@ -145,13 +138,9 @@ void cursor_to_top(char* buffer)
         cursor.C_Y--;
         sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
 
-// 		color_cursor(buffer);
-
         print_file(buffer, get_amount_lines(buffer));
 
         writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-//      --writing_buff.cur;
-//      writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
     }
     	else
 	{
@@ -169,13 +158,9 @@ void cursor_to_bottom(char* buffer)
         cursor.C_Y++;
         sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
 
-// 		color_cursor(buffer);
-
         print_file(buffer, get_amount_lines(buffer));
-        writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 
-//      ++writing_buff.cur;
-//      writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+        writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
     }
     	else
 	{
@@ -194,12 +179,7 @@ void cursor_to_right(char* buffer)
         sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
         writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 
-// 		color_cursor(buffer);
-
         print_file(buffer, get_amount_lines(buffer));
-
-//      writing_buff.cur += WIN_X;
-//      writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
     }
     	else
 	{
@@ -218,12 +198,7 @@ void cursor_to_left(char* buffer)
         sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
         writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 
-// 		color_cursor(buffer);
-
         print_file(buffer, get_amount_lines(buffer));
-
-//      writing_buff.cur -= WIN_X;
-//      writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
     }
     	else
 	{
@@ -233,23 +208,17 @@ void cursor_to_left(char* buffer)
 	}
 }
 
-
 //Mettre le curseur à la position (x,y) dans le texte affiché
-void cursor_to_location_buf(char* buffer, int x, int y)
+void cursor_to_location_buf(unsigned int x, unsigned int y)
 {
     if(x >= 1 && x < WIN_X && y >= 1 && y < WIN_Y)
     {
-        sprintf(buffer, "\x1b[%d;%dH", y, x);
-
-//      color_cursor(buffer);
+        sprintf(curseur, "\x1b[%d;%dH", y, x);
 
         cursor.C_X = x;
         cursor.C_Y = y;
 
-        print_file(buffer, get_amount_lines(buffer));
         writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-
-//      writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
     }
 }
 

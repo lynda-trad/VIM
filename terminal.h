@@ -35,8 +35,6 @@ void cursor_to_top_left();
 
 void cursor_to_bottom_left();
 
-void cursor_to_location(int x, int y);
-
 void cursor_to_top(char* buffer);
 
 void cursor_to_bottom(char* buffer);
@@ -45,7 +43,7 @@ void cursor_to_right(char* buffer);
 
 void cursor_to_left(char* buffer);
 
-void cursor_to_location_buf(char* buffer, int x, int y);
+void cursor_to_location_buf(unsigned int x, unsigned int y);
 
 // void color_cursor(char* buffer);
 

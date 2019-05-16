@@ -46,14 +46,7 @@ void cmd_key_pressed_buf(char* buffer, char key)
         break;
 
         default :
-            if( key == '\r' ) // ENTER == '\n' dans notre texte
-            {
-                key = '\n';
-                write(STDOUT_FILENO,&key,1);
-                writing_buff.buff[writing_buff.len] = key;
-                ++writing_buff.len;
-            }
-            else if (iscntrl(key))
+            if (iscntrl(key) && key != '\r')
             { // ignores CTRL V
                 //write(STDOUT_FILENO,"\r\n",2);
             }
@@ -61,6 +54,9 @@ void cmd_key_pressed_buf(char* buffer, char key)
             {
                 if(!file) //feuille blanche
                 {
+                    if( key == '\r' ) // ENTER == '\n' dans notre texte
+                        key = '\n';
+
                     write(STDOUT_FILENO,&key,1);
                     writing_buff.buff[writing_buff.cur] = key;
                     ++writing_buff.cur;
@@ -68,11 +64,35 @@ void cmd_key_pressed_buf(char* buffer, char key)
                 }
                 else
                 {
-                    write(STDOUT_FILENO,&key,1);
-                    writing_buff.buff[writing_buff.cur] = key;
+                    if( key == '\r' ) // ENTER == '\n' dans notre texte
+                        key = '\n';
+
+                    //decallage des char dans le buffer
+                    writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+                    unsigned int cx = cursor.C_X;
+                    unsigned int cy = cursor.C_Y;
+
+                    //incremente
                     ++writing_buff.len;
+
+                    memmove(&writing_buff.buff[writing_buff.cur + 2], &writing_buff.buff[writing_buff.cur + 1],
+                                                        writing_buff.len - writing_buff.cur);
+
+                    //on met le nouveau char a la position
+                    writing_buff.buff[writing_buff.cur] = key;
+
+                    //print le nouveau texte
+                    clear_term();
+                    editorDrawRows();
+                    cursor_to_top_left();
+                    print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+
+                    //on replace le curseur la ou on est
+                    cursor_to_location_buf(cx, cy);
                     increment_cursor();
+                    print_cursor();
                 }
+
                 /*
                 write(STDOUT_FILENO,&key,1);
 
@@ -102,14 +122,6 @@ void cmd_key_pressed_buf(char* buffer, char key)
                     ++writing_buff.cur;
                     ++writing_buff.len;
                 }
-                else
-                    if(!file)
-                {
-                    write(STDOUT_FILENO,&key,1);
-                    writing_buff.buff[writing_buff.cur] = key;
-                    ++writing_buff.cur;
-                    ++writing_buff.len;
-                }
                  */
             }
         break;
@@ -118,39 +130,65 @@ void cmd_key_pressed_buf(char* buffer, char key)
 
 void delete_character(char key)
 {
+
     //backspace
     if (key == 127)
     {
-		writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-        memmove(&writing_buff.buff[writing_buff.cur - 3], &writing_buff.buff[writing_buff.cur-2], writing_buff.len - writing_buff.cur-2);
+        if(file)
+        {
+            writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 
-        writing_buff.buff[writing_buff.len] = 0;
-        --writing_buff.cur;
-        --writing_buff.len;
+            if (writing_buff.cur <= writing_buff.len && writing_buff.cur > 0)
+            {
+                unsigned int cx = cursor.C_X;
+                unsigned int cy = cursor.C_Y;
 
-        cursor_to_left(curseur);
-        clear_term();
-        editorDrawRows();
-        cursor_to_top_left();
-        print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
-        print_cursor();
+                memmove(&writing_buff.buff[writing_buff.cur - 3], &writing_buff.buff[writing_buff.cur - 2],
+                        writing_buff.len - writing_buff.cur - 2);
+
+                writing_buff.buff[writing_buff.len] = 0;
+                --writing_buff.cur;
+                --writing_buff.len;
+
+                cursor_to_left(curseur);
+                clear_term();
+                editorDrawRows();
+                cursor_to_top_left();
+                print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+
+                cursor_to_location_buf(cx, cy);
+                print_cursor();
+            }
+        }
     }
     //delete
     if (key == '~')
     {
-		writing_buff.cur = get_pos_cur_buffer(cursor.C_X,cursor.C_Y);
-        memmove(&writing_buff.buff[writing_buff.cur-2], &writing_buff.buff[writing_buff.cur-1], writing_buff.len - (writing_buff.cur-2));
+        if(file)
+        {
+            writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+            if (writing_buff.cur <= writing_buff.len && writing_buff.cur > 0)
+            {
+                unsigned int cx = cursor.C_X;
+                unsigned int cy = cursor.C_Y;
 
-        writing_buff.buff[writing_buff.len] = 0;
+                memmove(&writing_buff.buff[writing_buff.cur - 2], &writing_buff.buff[writing_buff.cur - 1],
+                        writing_buff.len - (writing_buff.cur - 2));
 
-        sprintf(curseur, "\x1b[K"); // pas bon mais commande qui permet d'effacer toute la ligne depuis la position courante...
+                writing_buff.buff[writing_buff.len] = 0;
 
-        --writing_buff.len;
-        clear_term();
-        editorDrawRows();
-        cursor_to_top_left();
-        print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
- 	    print_cursor();
+                //sprintf(curseur, "\x1b[K"); // pas bon mais commande qui permet d'effacer toute la ligne depuis la position courante...
+
+                --writing_buff.len;
+                clear_term();
+                editorDrawRows();
+                cursor_to_top_left();
+                print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+
+                cursor_to_location_buf(cx, cy);
+                print_cursor();
+            }
+        }
     }
 }
 
