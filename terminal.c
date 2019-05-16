@@ -101,16 +101,26 @@ void moveCursorBuf(char *buffer)
 
 void increment_cursor()
 {
-    if(cursor.C_X < WIN_X)
-        ++cursor.C_X;
-    else
-    if(cursor.C_Y < WIN_Y)
+    if(file)
     {
-        ++cursor.C_Y;
-        cursor.C_X = 1;
-    }
+        if (cursor.C_X < WIN_X)
+            ++cursor.C_X;
+        else if (cursor.C_Y < WIN_Y) {
+            ++cursor.C_Y;
+            cursor.C_X = 1;
+        }
 
-    writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+        writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+    }
+    else
+    {
+        if (cursor.C_X < WIN_X)
+            ++cursor.C_X;
+        else if (cursor.C_Y < WIN_Y) {
+            ++cursor.C_Y;
+            cursor.C_X = 1;
+        }
+    }
 }
 
 void cursor_to_top_left()

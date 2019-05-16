@@ -111,7 +111,7 @@ void normal_mode()
             enableRawMode();
             insertion_mode();
         }
-
+        else
         if (!strcmp(tab[0], "q!"))
         {
             free(writing_buff.buff);
@@ -122,7 +122,7 @@ void normal_mode()
             fflush(STDIN_FILENO);
             exit(EXIT_SUCCESS);
         }
-
+        else
         if (!strcmp(tab[0], "q"))
         {
             if(writing_buff.buff[0])
@@ -146,7 +146,7 @@ void normal_mode()
                 exit(EXIT_SUCCESS);
             }
         }
-
+        else
         if (!strcmp(tab[0], "w") && !tab[1])
         {
             if(file)
@@ -170,7 +170,7 @@ void normal_mode()
             fflush(STDIN_FILENO);
             exit(EXIT_SUCCESS);
         }
-
+        else
         if (!strcmp(tab[0], "w") && tab[1])
         {
             write_to_file(tab[1], writing_buff.buff);
@@ -183,7 +183,19 @@ void normal_mode()
             fflush(STDIN_FILENO);
             exit(EXIT_SUCCESS);
         }
-
+        else
+        {
+            write(STDOUT_FILENO, "Command does not exist!", 23);
+            write(STDOUT_FILENO,"\n\rIn Normal mode:\n\r\n\r :i = go back to Insertion mode\n\r :w = save to current opened file\n\r", 89);
+            write(STDOUT_FILENO," :w <filename> = save to <filename>\n\r :q = quit clone\n\r :q! = quit without saving\n\r", 83);
+            write(STDOUT_FILENO,"You can enter a new command in 5 seconds.\n\r", 43);
+            sleep(5);
+            free(s);
+            free(tab);
+            fflush(STDIN_FILENO);
+            enableRawMode();
+            normal_mode();
+        }
         free(writing_buff.buff);
         free(s);
         free(tab);

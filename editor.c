@@ -84,6 +84,7 @@ void add_character(char key)
     writing_buff.buff[writing_buff.cur] = key;
     ++writing_buff.cur;
     ++writing_buff.len;
+    increment_cursor();
 }
 
 void add_character_file(char key)
@@ -130,12 +131,14 @@ void delete_character(char key)
                 unsigned int cy = cursor.C_Y;
 
                 memmove(&writing_buff.buff[writing_buff.cur - 3], &writing_buff.buff[writing_buff.cur - 2],
-                        writing_buff.len - writing_buff.cur - 2);
+                        writing_buff.len - (writing_buff.cur - 2));
 
+                writing_buff.buff[writing_buff.len-2] = 0;
+                writing_buff.buff[writing_buff.len-1] = 0;
                 writing_buff.buff[writing_buff.len] = 0;
-                --writing_buff.cur;
                 --writing_buff.len;
 
+                fflush(stdout);
                 cursor_to_left(curseur);
                 clear_term();
                 editorDrawRows();
@@ -143,6 +146,19 @@ void delete_character(char key)
                 print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
 
                 cursor_to_location_buf(cx, cy);
+                print_cursor();
+            }
+        }
+        else
+        {
+            writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+
+            if(writing_buff.cur <= writing_buff.len && writing_buff.cur > 0)
+            {
+                cursor_to_left(curseur);
+
+                --writing_buff.cur;
+                --writing_buff.len;
                 print_cursor();
             }
         }
