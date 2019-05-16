@@ -66,7 +66,7 @@ void insertion_mode()
     while(1)
     {
         read(STDIN_FILENO,&key,1);
-        cmd_key_pressed_buf(writing_buff.buff, key);
+        cmd_key_pressed_buf(curseur, key);
     }
 }
 
@@ -117,6 +117,7 @@ void normal_mode()
             free(writing_buff.buff);
             free(s);
             free(tab);
+            free(curseur);
             printf("EXITING\n");
             fflush(STDIN_FILENO);
             exit(EXIT_SUCCESS);
@@ -139,6 +140,7 @@ void normal_mode()
                 free(writing_buff.buff);
                 free(s);
                 free(tab);
+                free(curseur);
                 printf("EXITING\n");
                 fflush(STDIN_FILENO);
                 exit(EXIT_SUCCESS);
@@ -188,8 +190,6 @@ void normal_mode()
 
     }
 }
-
-
 
 int parse_line(char *s, char **argv[])
 {

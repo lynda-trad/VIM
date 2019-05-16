@@ -13,6 +13,8 @@ typedef struct
 
 buff_t writing_buff;
 
+char* curseur;
+
 void initEditor();
 
 void cmd_key_pressed_buf( char* buffer, char key);

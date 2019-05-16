@@ -18,6 +18,9 @@ Lynda :
 - gestion du mode normal (parsing et execution de la commande)
 - afficher le fichier en argument
 - detecter backspace et DEL
+- comportement du buffer et du curseur si on presse backspace et suppr
+- écrire sur une feuille blanche
+- se déplacer dans un texte et le modifier
 
 Nadeesha :
 

@@ -59,29 +59,58 @@ void cmd_key_pressed_buf(char* buffer, char key)
             }
             else
             {
+                if(!file) //feuille blanche
+                {
+                    write(STDOUT_FILENO,&key,1);
+                    writing_buff.buff[writing_buff.cur] = key;
+                    ++writing_buff.cur;
+                    ++writing_buff.len;
+                }
+                else
+                {
+                    write(STDOUT_FILENO,&key,1);
+                    writing_buff.buff[writing_buff.cur] = key;
+                    ++writing_buff.len;
+                    increment_cursor();
+                }
+                /*
                 write(STDOUT_FILENO,&key,1);
-                writing_buff.buff[writing_buff.len] = key;
+
+                memmove(&writing_buff.buff[writing_buff.cur + 1], &writing_buff.buff[writing_buff.cur], writing_buff.len - writing_buff.cur);
+
+                writing_buff.buff[writing_buff.cur] = key;
+
+                increment_cursor();
+
                 ++writing_buff.cur;
                 ++writing_buff.len;
+                */
 
-            /*
+                /*
                 if(file)
                 {
                     write(STDOUT_FILENO, &key, 1);
 
                     //decallage du reste
-                    memmove(&writing_buff.cur + 2, &writing_buff.cur + 1, writing_buff.len - writing_buff.cur);
+                    memmove(&writing_buff.buff[writing_buff.cur + 1], &writing_buff.buff[writing_buff.cur], writing_buff.len - writing_buff.cur);
 
                     //on met le nouveau char a la position
                     writing_buff.buff[writing_buff.cur] = key;
+
+                    increment_cursor();
+
+                    ++writing_buff.cur;
                     ++writing_buff.len;
                 }
                 else
                     if(!file)
                 {
-             }
-            */
-
+                    write(STDOUT_FILENO,&key,1);
+                    writing_buff.buff[writing_buff.cur] = key;
+                    ++writing_buff.cur;
+                    ++writing_buff.len;
+                }
+                 */
             }
         break;
     }
@@ -90,46 +119,41 @@ void cmd_key_pressed_buf(char* buffer, char key)
 void delete_character(char key)
 {
     //backspace
-
- /*    // EXEMPLE
     if (key == 127)
     {
-        memmove(&writing_buff.buff[5], &writing_buff.buff[6], writing_buff.len - 6);
+		writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+        memmove(&writing_buff.buff[writing_buff.cur - 3], &writing_buff.buff[writing_buff.cur-2], writing_buff.len - writing_buff.cur-2);
+
         writing_buff.buff[writing_buff.len] = 0;
-        --cursor.C_X;
         --writing_buff.cur;
         --writing_buff.len;
 
-		    sprintf(writing_buff.buff, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
-		    print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
-    }*/
-    
-
-    if (key == 127)
-    {
-		writing_buff.cur=get_pos_cur_buffer(cursor.C_X,cursor.C_Y); // avec cette fonction ça ne fait plus segfault et on voit bien le curseur reculer mais efface toujours pas
-        memmove(&writing_buff.buff[writing_buff.cur - 1], &writing_buff.buff[writing_buff.cur], writing_buff.len - writing_buff.cur);
-
-        writing_buff.buff[writing_buff.len] = 0;
-        --cursor.C_X;
-        --writing_buff.cur;
-        --writing_buff.len;
-	   sprintf(writing_buff.buff, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);//affiche le curseur
+        cursor_to_left(curseur);
+        clear_term();
+        editorDrawRows();
+        cursor_to_top_left();
         print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
-
+        print_cursor();
     }
+    //delete
     if (key == '~')
     {
-		writing_buff.cur=get_pos_cur_buffer(cursor.C_X,cursor.C_Y);
-        memmove(&writing_buff.buff[writing_buff.cur + 1], &writing_buff.buff[writing_buff.cur + 2], writing_buff.len - writing_buff.cur);
-        writing_buff.buff[writing_buff.len] = 0;
- 	   sprintf(writing_buff.buff, "\x1b[K"); // pas bon mais commande qui permet d'effacer toute la ligne depuis la position courante...
-        --writing_buff.len;
-// 	   sprintf(writing_buff.buff, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X); //affiche le curseur
-        print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
-    }
+		writing_buff.cur = get_pos_cur_buffer(cursor.C_X,cursor.C_Y);
+        memmove(&writing_buff.buff[writing_buff.cur + 1], &writing_buff.buff[writing_buff.cur + 2], writing_buff.len - (writing_buff.cur + 2));
 
+        writing_buff.buff[writing_buff.len] = 0;
+
+        sprintf(curseur, "\x1b[K"); // pas bon mais commande qui permet d'effacer toute la ligne depuis la position courante...
+
+        --writing_buff.len;
+        clear_term();
+        editorDrawRows();
+        cursor_to_top_left();
+        print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+ 	    print_cursor();
+    }
 }
+
 char *get_file(const char *path)
 {
     char *ret;

@@ -25,7 +25,11 @@ void clear_term();
 
 void editorDrawRows();
 
+void print_cursor();
+
 void moveCursorBuf(char * buffer);
+
+void increment_cursor();
 
 void cursor_to_top_left();
 

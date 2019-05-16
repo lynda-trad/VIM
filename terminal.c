@@ -60,7 +60,10 @@ void editorDrawRows()
     }
 }
 
-//Gestion du curseur en mode insertion pour un texte déjà affiché (par un fichier donné en argument)
+void print_cursor()
+{
+    sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+}
 
 void moveCursorBuf(char *buffer)
 {
@@ -94,6 +97,20 @@ void moveCursorBuf(char *buffer)
                 delete_character(k1);
             break;
     }
+}
+
+void increment_cursor()
+{
+    if(cursor.C_X < WIN_X)
+        ++cursor.C_X;
+    else
+    if(cursor.C_Y < WIN_Y)
+    {
+        ++cursor.C_Y;
+        cursor.C_X = 1;
+    }
+
+    writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 }
 
 void cursor_to_location(int x, int y)
@@ -132,8 +149,9 @@ void cursor_to_top(char* buffer)
 
         print_file(buffer, get_amount_lines(buffer));
 
-//         --writing_buff.cur;
-        //writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+        writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+//      --writing_buff.cur;
+//      writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
     }
     	else
 	{
@@ -154,9 +172,10 @@ void cursor_to_bottom(char* buffer)
 // 		color_cursor(buffer);
 
         print_file(buffer, get_amount_lines(buffer));
+        writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 
-//         ++writing_buff.cur;
-        //writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+//      ++writing_buff.cur;
+//      writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
     }
     	else
 	{
@@ -173,13 +192,14 @@ void cursor_to_right(char* buffer)
     {
         cursor.C_X++;
         sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+        writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 
 // 		color_cursor(buffer);
 
         print_file(buffer, get_amount_lines(buffer));
 
-//         writing_buff.cur += WIN_X;
-        //writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+//      writing_buff.cur += WIN_X;
+//      writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
     }
     	else
 	{
@@ -196,13 +216,14 @@ void cursor_to_left(char* buffer)
     {
         cursor.C_X--;
         sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+        writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 
 // 		color_cursor(buffer);
 
         print_file(buffer, get_amount_lines(buffer));
 
-//         writing_buff.cur -= WIN_X;
-        //writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+//      writing_buff.cur -= WIN_X;
+//      writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
     }
     	else
 	{
@@ -226,8 +247,9 @@ void cursor_to_location_buf(char* buffer, int x, int y)
         cursor.C_Y = y;
 
         print_file(buffer, get_amount_lines(buffer));
+        writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 
-        writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
+//      writing_buff.cur = (cursor.C_X-1) * (cursor.C_Y-1) + cursor.C_X;
     }
 }
 
