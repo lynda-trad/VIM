@@ -35,11 +35,16 @@ Difficultés rencontrées :
 
 - le passage du mode normal au mode insertion une fois la ligne de commande commencée;
     solution trouvée : une commande :i pour passer en mode insertion si la commande a commencé.
+
 - passage du mode insertion au mode normal, on doit presser ECHAP ( c == 27 ), cela provoque des
 conflits avec la détection des flèches;
     solution trouvée : ECHAP est remplacé par TAB.
-- le curseur ne s'arrete pas en bout de ligne apart lorsqu'on ecrit sur une feuille blanche.
+
 - presser backspace et delete plusieurs fois donnent parfois lieu à des problèmes
 d'affichage du buffer, il faut passer en mode normal pour voir ce qu'est réellement le buffer.
+
 - backspace : segfault lorsqu'on est en haut à gauche,
 pour effacer un caractere avec backspace il faut se mettre sur le caractère à sa droite.
+
+- le curseur ne s'arrete pas en bout de ligne :
+ apart lorsqu'on est sur une feuille blanche, sinon lorsque l'on veut descendre sur une ligne qui est vide.

@@ -143,7 +143,6 @@ void delete_character(char key)
             print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
 
             cursor_to_location_buf(cx, cy);
-            printf("%d",cx);
             print_cursor();
         }
     }
@@ -151,7 +150,7 @@ void delete_character(char key)
     if (key == '~')
     {
         writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-        if (writing_buff.cur <= writing_buff.len && writing_buff.cur > 0)
+        if (writing_buff.cur <= writing_buff.len-1 && writing_buff.cur > 0)
         {
             unsigned int cx = cursor.C_X;
             unsigned int cy = cursor.C_Y;
@@ -159,7 +158,7 @@ void delete_character(char key)
             memmove(&writing_buff.buff[writing_buff.cur - 1], &writing_buff.buff[writing_buff.cur],
                     writing_buff.len - (writing_buff.cur - 1));
 
-            writing_buff.buff[writing_buff.len] = 0;
+            //writing_buff.buff[writing_buff.len] = 0;
 
             --writing_buff.len;
             clear_term();
