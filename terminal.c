@@ -14,6 +14,8 @@
 #include "clone.h"
 #include "editor.h"
 #include "terminal.h"
+#include "mice.h"
+
 
 void disableRawMode()
 {
@@ -227,13 +229,22 @@ void cursor_to_location_buf(unsigned int x, unsigned int y)
 {
     if(x >= 1 && x < WIN_X && y >= 1 && y < WIN_Y)
     {
-        sprintf(curseur, "\x1b[%d;%dH", y, x);
-
         cursor.C_X = x;
         cursor.C_Y = y;
-
+	   sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
         writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+
     }
+	else
+	{
+		writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+		sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+	}
+}
+
+cursor_t get_cursor()
+{
+	return cursor;
 }
 
 /*

@@ -1,5 +1,5 @@
 EXEC=clone
-SOURCES=clone.c editor.c mode.c terminal.c
+SOURCES=clone.c editor.c mode.c terminal.c mice.c
 OBJECTS=$(SOURCES:.c=.o)
 CC=gcc
 
@@ -10,10 +10,11 @@ LFLAGS=-lm
  
 default: $(EXEC)
 
+mice.o: mice.c mice.h
 terminal.o : terminal.c terminal.h
 mode.o : mode.c mode.h
 editor.o : editor.c editor.h
-clone.o : clone.c clone.h editor.h mode.h
+clone.o : clone.c clone.h editor.h mode.h mice.h
 
 %.o: %.c
 	$(CC) -o $@ -c $< $(CFLAGS)

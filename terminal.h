@@ -45,6 +45,8 @@ void cursor_to_left(char* buffer);
 
 void cursor_to_location_buf(unsigned int x, unsigned int y);
 
+cursor_t get_cursor();
+
 // void color_cursor(char* buffer);
 
 #endif //CLONE_TERMINAL_H

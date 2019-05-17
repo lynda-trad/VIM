@@ -17,6 +17,8 @@
 #include "clone.h"
 #include "editor.h"
 #include "terminal.h"
+#include "mice.h"
+
 
 void initEditor()
 {
@@ -155,8 +157,8 @@ void delete_character(char key)
             unsigned int cx = cursor.C_X;
             unsigned int cy = cursor.C_Y;
 
-            memmove(&writing_buff.buff[writing_buff.cur - 1], &writing_buff.buff[writing_buff.cur],
-                    writing_buff.len - (writing_buff.cur - 1));
+            memmove(&writing_buff.buff[writing_buff.cur - 2], &writing_buff.buff[writing_buff.cur - 1],
+                    writing_buff.len - (writing_buff.cur - 2));
 
             //writing_buff.buff[writing_buff.len] = 0;
 

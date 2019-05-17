@@ -18,6 +18,8 @@
 #include "clone.h"
 #include "editor.h"
 #include "terminal.h"
+#include "mice.h"
+
 
 void handler()
 {
