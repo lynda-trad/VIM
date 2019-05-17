@@ -50,7 +50,6 @@ void cmd_key_pressed_buf(char* buffer, char key)
         default :
             if (iscntrl(key) && key != '\r')
             { // ignores CTRL V
-                //write(STDOUT_FILENO,"\r\n",2);
             }
             else
             {
@@ -62,8 +61,8 @@ void cmd_key_pressed_buf(char* buffer, char key)
                     add_character(key);
                 }
                 else
-                {
-                    if (key == '\r') // ENTER == '\n' dans notre texte
+                {   //file en argument
+                    if (key == '\r')
                         key = '\n';
 
                     if (writing_buff.cur > writing_buff.len)

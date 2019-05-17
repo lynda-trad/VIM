@@ -43,4 +43,3 @@ conflits avec la détection des flèches;
 d'affichage du buffer, il faut passer en mode normal pour voir ce qu'est réellement le buffer.
 - backspace : segfault lorsqu'on est en haut à gauche,
 pour effacer un caractere avec backspace il faut se mettre sur le caractère à sa droite.
-- si on veut effacer un char avec DEL il faut se placer sur le char qu'on veut supprimer.
