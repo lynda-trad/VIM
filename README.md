@@ -28,7 +28,6 @@ Nadeesha :
 - fonctions pour bouger le curseur dans un fichier en mode Insertion 
 - fonctions pour avoir la position courante ou le nombre de caractères dans une ligne du buffer.
 - afficher le curseur
-- comportement du buffer et du curseur si on presse backspace et suppr
 - début de la mise en place du curseur de la souris
 
 
@@ -39,4 +38,9 @@ Difficultés rencontrées :
 - passage du mode insertion au mode normal, on doit presser ECHAP ( c == 27 ), cela provoque des
 conflits avec la détection des flèches;
     solution trouvée : ECHAP est remplacé par TAB.
-- le curseur ne s'arrete pas en bout de ligne 
+- le curseur ne s'arrete pas en bout de ligne apart lorsqu'on ecrit sur une feuille blanche.
+- presser backspace et delete plusieurs fois donnent parfois lieu à des problèmes
+d'affichage du buffer, il faut passer en mode normal pour voir ce qu'est réellement le buffer.
+- backspace : segfault lorsqu'on est en haut à gauche,
+pour effacer un caractere avec backspace il faut se mettre sur le caractère à sa droite.
+- si on veut effacer un char avec DEL il faut se placer sur le char qu'on veut supprimer.

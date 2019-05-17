@@ -163,21 +163,22 @@ void cursor_to_top(char* buffer)
 //Descendre d'une ligne dans un texte affiché
 void cursor_to_bottom(char* buffer)
 {
-    if(cursor.C_Y >= 1 && cursor.C_Y < WIN_Y && cursor.C_X >= 1 && cursor.C_X < WIN_X)
+    if(writing_buff.cur + WIN_Y <= writing_buff.len )
     {
-        cursor.C_Y++;
-        sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+        if (cursor.C_Y >= 1 && cursor.C_Y < WIN_Y && cursor.C_X >= 1 && cursor.C_X < WIN_X)
+        {
+            cursor.C_Y++;
+            sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
 
-        print_file(buffer, get_amount_lines(buffer));
+            print_file(buffer, get_amount_lines(buffer));
 
-        writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+            writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+        } else {
+            writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+            sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+            print_file(buffer, get_amount_lines(buffer));
+        }
     }
-    else
-	{
-		writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-		sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
-		print_file(buffer, get_amount_lines(buffer));
-	}
 }
 
 //Se déplacer d'un caractère/d'une colonne à droite dans un texte affiché

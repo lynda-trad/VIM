@@ -99,8 +99,7 @@ void add_character_file(char key)
     //incremente
     ++writing_buff.len;
 
-    memmove(&writing_buff.buff[writing_buff.cur-1], &writing_buff.buff[writing_buff.cur-2],
-            writing_buff.len - (writing_buff.cur-2));
+    memmove(&writing_buff.buff[writing_buff.cur-1], &writing_buff.buff[writing_buff.cur-2], writing_buff.len - (writing_buff.cur-2));
 
     //on met le nouveau char a la position
     writing_buff.buff[writing_buff.cur-1] = key;
@@ -124,7 +123,8 @@ void delete_character(char key)
     if (key == 127)
     {
         writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-        if (writing_buff.cur <= writing_buff.len && writing_buff.cur > 0) {
+        if ((writing_buff.cur <= writing_buff.len && writing_buff.cur != 0) || (cursor.C_X == 1 && cursor.C_X == 1))
+        {
             unsigned int cx = cursor.C_X;
             unsigned int cy = cursor.C_Y;
 
@@ -144,6 +144,7 @@ void delete_character(char key)
             print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
 
             cursor_to_location_buf(cx, cy);
+            printf("%d",cx);
             print_cursor();
         }
     }
@@ -156,8 +157,8 @@ void delete_character(char key)
             unsigned int cx = cursor.C_X;
             unsigned int cy = cursor.C_Y;
 
-            memmove(&writing_buff.buff[writing_buff.cur - 2], &writing_buff.buff[writing_buff.cur - 1],
-                    writing_buff.len - (writing_buff.cur - 2));
+            memmove(&writing_buff.buff[writing_buff.cur - 1], &writing_buff.buff[writing_buff.cur],
+                    writing_buff.len - (writing_buff.cur - 1));
 
             writing_buff.buff[writing_buff.len] = 0;
 
@@ -201,7 +202,6 @@ char *get_file(const char *path)
     //ret[all_r] = '\0';
 
     writing_buff.len = all_r;
-    //writing_buff.cur = all_r; // placer cur a la fin du fichier
 
     return ret;
 }
