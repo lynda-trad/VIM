@@ -46,8 +46,8 @@ void read_mouse(int fd, char* buffer)
 // Informations de la souris (droite/gauche/milieu et coordonnés +1/-1 à ajouter à mouse);
     char mice_data[3];
 
-    while (1) 
-    {
+    
+    
         // Read Mouse
         bytes = read(fd, mice_data, sizeof(mice_data));
 
@@ -81,7 +81,7 @@ void read_mouse(int fd, char* buffer)
 			}
 
 	   }
-    }
+    
  
 }
 	
