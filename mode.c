@@ -6,6 +6,7 @@
 #include <errno.h>
 
 #include <signal.h>
+#include <poll.h>
 
 #include <ctype.h>
 
@@ -62,10 +63,50 @@ void insertion_mode()
     print_file(writing_buff.buff, writing_buff.len);
     cursor_to_top_left();
 
+    /*
+	int fd0, fd1, bytes;
+
+    const char *pDevice = "/dev/input/mice";
+
+//  Open Mouse & STDIN
+
+    fd0 = dup(STDIN_FILENO);
+    fd1 = open(pDevice, O_RDWR | O_NONBLOCK);
+
+    if (fd0 == -1 || fd1 == -1)
+        die("open failed");
+
+    int left, middle, right;
+    signed char x, y;
+
+    struct pollfd pfds[2];
+    pfds[0].fd = fd0;
+    pfds[0].events = POLLIN;
+    pfds[1].fd = fd1;
+    pfds[1].events = POLLIN;
+
+    */
+
     char key;
     while(1)
     {
         read(STDIN_FILENO,&key,1);
+        /*
+            poll(&pfds, 2, -1);
+            for(int i = 0; i < 2; ++i)
+            {
+                if(pfds[i].revents & POLLIN)
+                {
+                    if(i = 0)
+                    {
+                        read(fd0,&key,1);
+                        cmd_key_pressed_buf(curseur, key);
+                    }
+                    else if(i = 1)
+                        //mice
+                }
+            }
+         */
         cmd_key_pressed_buf(curseur, key);
     }
 }
