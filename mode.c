@@ -91,6 +91,7 @@ void insertion_mode()
     while(1)
     {
         read(STDIN_FILENO,&key,1);
+        cmd_key_pressed_buf(curseur, key);
         /*
             poll(&pfds, 2, -1);
             for(int i = 0; i < 2; ++i)
@@ -107,7 +108,6 @@ void insertion_mode()
                 }
             }
          */
-        cmd_key_pressed_buf(curseur, key);
     }
 }
 
@@ -155,10 +155,10 @@ void normal_mode()
         else
         if (!strcmp(tab[0], "q!"))
         {
-            free(writing_buff.buff);
             free(s);
             free(tab);
             free(curseur);
+            free(writing_buff.buff);
             printf("EXITING\n");
             fflush(STDIN_FILENO);
             exit(EXIT_SUCCESS);
@@ -178,10 +178,10 @@ void normal_mode()
             }
             else
             {
-                free(writing_buff.buff);
                 free(s);
                 free(tab);
                 free(curseur);
+                free(writing_buff.buff);
                 printf("EXITING\n");
                 fflush(STDIN_FILENO);
                 exit(EXIT_SUCCESS);
@@ -203,9 +203,10 @@ void normal_mode()
                 normal_mode();
             }
 
-            free(writing_buff.buff);
             free(s);
             free(tab);
+            free(curseur);
+            free(writing_buff.buff);
 
             printf("SAVED TO %s\n", file);
             fflush(STDIN_FILENO);
@@ -216,9 +217,10 @@ void normal_mode()
         {
             write_to_file(tab[1], writing_buff.buff);
 
-            free(writing_buff.buff);
             free(s);
             free(tab);
+            free(curseur);
+            free(writing_buff.buff);
 
             printf("SAVED TO %s\n", tab[1]);
             fflush(STDIN_FILENO);
@@ -229,7 +231,7 @@ void normal_mode()
             write(STDOUT_FILENO, "Command does not exist!", 23);
             write(STDOUT_FILENO,"\n\rIn Normal mode:\n\r\n\r :i = go back to Insertion mode\n\r :w = save to current opened file\n\r", 89);
             write(STDOUT_FILENO," :w <filename> = save to <filename>\n\r :q = quit clone\n\r :q! = quit without saving\n\r", 83);
-            write(STDOUT_FILENO,"You can enter a new command in 5 seconds.\n\r", 43);
+            write(STDOUT_FILENO,"Wait 5 seconds to enter a new command.\n\r", 43);
             sleep(5);
             free(s);
             free(tab);
@@ -237,10 +239,11 @@ void normal_mode()
             enableRawMode();
             normal_mode();
         }
-        free(writing_buff.buff);
+
         free(s);
         free(tab);
-
+        free(curseur);
+        free(writing_buff.buff);
     }
 }
 
