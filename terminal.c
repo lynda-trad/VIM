@@ -186,8 +186,8 @@ void cursor_to_bottom(char* buffer)
 //Se déplacer d'un caractère/d'une colonne à droite dans un texte affiché
 void cursor_to_right(char* buffer)
 {
-    if(writing_buff.cur < writing_buff.len-1)
-    {
+    //if(writing_buff.cur < writing_buff.len-1)
+    //{
         if (cursor.C_X >= 1 && cursor.C_X < WIN_X)
         {
             cursor.C_X++;
@@ -202,7 +202,7 @@ void cursor_to_right(char* buffer)
             sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
             print_file(buffer, get_amount_lines(buffer));
         }
-    }
+    //}
 }
 
 //Se déplacer d'un caractère/d'une colonne à gauche dans un texte affiché

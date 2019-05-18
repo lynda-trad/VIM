@@ -64,9 +64,6 @@ void insertion_mode()
     print_file(writing_buff.buff, writing_buff.len);
     cursor_to_top_left();
 
-    
-	int fd0, fd1;
-
     const char *pDevice = "/dev/input/mice";
 
 //  Open Mouse & STDIN
@@ -100,10 +97,10 @@ void insertion_mode()
                         cmd_key_pressed_buf(curseur, key);
                     }
                     else if(i == 1)
-				    read_mouse(fd1, curseur);
+				        read_mouse(fd1, curseur);
                 }
                 
-			 if(pfds[i].revents & POLLHUP) exit(0);
+			    if(pfds[i].revents & POLLHUP) exit(0);
 
             }
     }
@@ -153,6 +150,7 @@ void normal_mode()
         else
         if (!strcmp(tab[0], "q!"))
         {
+            close(fd1);
             free(s);
             free(tab);
             free(curseur);
@@ -176,6 +174,7 @@ void normal_mode()
             }
             else
             {
+                close(fd1);
                 free(s);
                 free(tab);
                 free(curseur);
@@ -201,6 +200,7 @@ void normal_mode()
                 normal_mode();
             }
 
+            close(fd1);
             free(s);
             free(tab);
             free(curseur);
@@ -215,6 +215,7 @@ void normal_mode()
         {
             write_to_file(tab[1], writing_buff.buff);
 
+            close(fd1);
             free(s);
             free(tab);
             free(curseur);
@@ -238,6 +239,7 @@ void normal_mode()
             normal_mode();
         }
 
+        close(fd1);
         free(s);
         free(tab);
         free(curseur);

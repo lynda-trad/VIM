@@ -1,6 +1,8 @@
 #ifndef CLONE_MODE_H
 #define CLONE_MODE_H
 
+//STDIN & mice
+int fd0, fd1;
 
 void choosing_mode();
 
