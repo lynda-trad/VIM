@@ -137,9 +137,9 @@ void cursor_to_top_left()
 
 void cursor_to_bottom_left()
 {
-    write(STDOUT_FILENO, "\033[75;1f", 9);
+    write(STDOUT_FILENO, "\033[45;10f", 9);
     cursor.C_X = 1;
-    cursor.C_Y = 75;
+    cursor.C_Y = WIN_Y - 5;
 }
 
 //Monter d'une ligne dans un texte affiché
