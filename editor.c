@@ -39,8 +39,26 @@ void cmd_key_pressed_buf(char* buffer, char key)
             break;
 
         case 127:
+
+            if(cursor.C_X == 1)
+            {
+                unsigned int c;
+                c = cursor.C_Y;
+                if (c != 1)
+                    delete_character(key);
+            }
+            else
+            if(cursor.C_X >= 2)
+            {
+                unsigned int c;
+                c = ((cursor.C_X -1)* WIN_Y + cursor.C_X) - 1;
+                if (c != 0 && c != 1)
+                    delete_character(key);
+            }
+            /*
             if(writing_buff.cur != 0 && writing_buff.cur != 1)
                 delete_character(key);
+            */
         break;
 
         default :

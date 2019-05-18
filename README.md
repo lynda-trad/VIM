@@ -67,7 +67,5 @@ Une fois revenu en mode insertion on peut se déplacer et modifier le fichier.
 
 - Le curseur ne s'arrete pas en bout de ligne, il peut flotter dans le vide.
 
-- Segfault : lorsque l'on veut effacer avec backspace un char alors qu'on est en haut a gauche (dans certains cas).
-
 - Ecriture dans l'éditeur de texte bloquée si on efface tous les caractères du fichier avec DEL (peut être un problème
 de curseur)
