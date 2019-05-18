@@ -15,13 +15,13 @@
 void print_mouse_cursor(char * buffer)
 {
     sprintf(buffer, "\x1b[%d;%dH", mouse.M_Y, mouse.M_X);
-    print_file(buffer, get_amount_lines(buffer));
+    print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
 }
 
 void initMouse()
 {
-    mouse.M_X = 1;
-    mouse.M_Y = 1;
+    mouse.M_X = cursor.C_X;
+    mouse.M_Y = cursor.C_Y;
 }
 
 void update_mouse(signed char x, signed char y)
@@ -52,9 +52,10 @@ void read_mouse(int fd, char* buffer)
         left = mice_data[0] & 0x1;         // 1 quand clic gauche 0 quand relaché
 //      right = mice_data[0] & 0x2;
 //      middle = mice_data[0] & 0x4;
-        x = mice_data[1];                  // 0 quand on descend ou monte // -1 quand on va a gauche // 1 quand on va a droite
-        y = mice_data[2];                  // 0 quand on va a gauche ou a droite // -1 quand on descend // 1 quand on monte
-
+        x = 1;                 // 0 quand on descend ou monte // -1 quand on va a gauche // 1 quand on va a droite
+        y = 1;                  // 0 quand on va a gauche ou a droite // -1 quand on descend // 1 quand on monte
+        
+// A chaque appel à update_mouse donc à chaque clic gauche, le curseur doit descendre d'une ligne et aller a droite --> diagonale
 // Mise à jour des coordonnées du curseur de la souris en fonction de x et y si clique gauche
         if (left == 1)
         {
@@ -65,7 +66,7 @@ void read_mouse(int fd, char* buffer)
 
 // Affichage du curseur dans le buffer
             print_mouse_cursor(buffer);
-            print_mouse_cursor(curseur);
+//             print_mouse_cursor(curseur);
 
             clear_term();
             editorDrawRows();
@@ -74,7 +75,7 @@ void read_mouse(int fd, char* buffer)
             cursor.C_X = mouse.M_X;
             cursor.C_Y = mouse.M_Y;
             sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
-            print_file(curseur, get_amount_lines(curseur));
+            print_file(writing_buff.buff, get_amount_lines(curseur));
         }
     }
 }

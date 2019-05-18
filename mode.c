@@ -94,7 +94,9 @@ void insertion_mode()
                         cmd_key_pressed_buf(curseur, key);
                     }
                     else if(i == 1)
+					   for(int j=0; j<2; j++){
 				        read_mouse(fd1, souris);
+					   }
                 }
                 
 			    if(pfds[i].revents & POLLHUP) exit(0);
