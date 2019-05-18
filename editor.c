@@ -39,15 +39,13 @@ void cmd_key_pressed_buf(char* buffer, char key)
             moveCursorBuf(buffer);
             break;
 
-        case 126: //maybe DEL ( == '~' )
-                delete_character(key);
-            break;
 
         case 127:
             if(writing_buff.cur != 0 && writing_buff.cur != 1)
                 delete_character(key);
         break;
 
+        case 126: // '~' ( equivaut à DEL mais nous on veut que le char s'affiche )
         default :
             if (iscntrl(key) && key != '\r')
             { // ignores CTRL V
@@ -59,12 +57,18 @@ void cmd_key_pressed_buf(char* buffer, char key)
                     if( key == '\r' ) // ENTER == '\n' dans notre texte
                         key = '\n';
 
+                    if (key == 126)
+                        key = '~';
+
                     add_character(key);
                 }
                 else
                 {   //file en argument
                     if (key == '\r')
                         key = '\n';
+
+                    if (key == 126)
+                        key = '~';
 
                     if (writing_buff.cur > writing_buff.len)
                     {
@@ -143,6 +147,7 @@ void delete_character(char key)
 
             cursor_to_location_buf(cx-1, cy);
             print_cursor();
+            writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
         }
     }
     //delete
