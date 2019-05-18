@@ -2,24 +2,27 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
 #include <errno.h>
+
 #include <signal.h>
 #include <poll.h>
+
 #include <ctype.h>
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include "mice.h"
 #include "mode.h"
 #include "clone.h"
 #include "editor.h"
 #include "terminal.h"
+#include "mice.h"
 
 void choosing_mode()
 {
     //where you choose the mode
-    write(STDOUT_FILENO,"         CLONE         \n\r", 25);
     write(STDOUT_FILENO,"Press i to enter Insertion mode. Press TAB to enter Normal mode.\n\r", 68);
     write(STDOUT_FILENO,"\n\rIn Normal mode:\n\r\n\r :i = go back to Insertion mode\n\r :w = save to current opened file\n\r", 89);
     write(STDOUT_FILENO," :w <filename> = save to <filename>\n\r :q = quit clone\n\r :q! = quit without saving\n\r", 83);
@@ -58,15 +61,18 @@ void insertion_mode()
     //writes from STDIN_FILENO
     enableRawMode();
     cursor_to_top_left();
-    print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+    print_file(writing_buff.buff, writing_buff.len);
     cursor_to_top_left();
+
+    
+	int fd0, fd1;
 
     const char *pDevice = "/dev/input/mice";
 
 //  Open Mouse & STDIN
 
     fd0 = dup(STDIN_FILENO);
-    fd1 = open(pDevice, O_RDONLY);
+    fd1 = open(pDevice, O_RDWR | O_NONBLOCK);
 
     if (fd0 == -1 || fd1 == -1)
         die("open failed");
@@ -94,11 +100,10 @@ void insertion_mode()
                         cmd_key_pressed_buf(curseur, key);
                     }
                     else if(i == 1)
-				        read_mouse(fd1, souris);
-					   
+				    read_mouse(fd1, curseur);
                 }
                 
-			    if(pfds[i].revents & POLLHUP) exit(0);
+			 if(pfds[i].revents & POLLHUP) exit(0);
 
             }
     }
@@ -148,10 +153,8 @@ void normal_mode()
         else
         if (!strcmp(tab[0], "q!"))
         {
-            close(fd1);
             free(s);
             free(tab);
-            free(souris);
             free(curseur);
             free(writing_buff.buff);
             printf("EXITING\n");
@@ -173,10 +176,8 @@ void normal_mode()
             }
             else
             {
-                close(fd1);
                 free(s);
                 free(tab);
-                free(souris);
                 free(curseur);
                 free(writing_buff.buff);
                 printf("EXITING\n");
@@ -200,10 +201,8 @@ void normal_mode()
                 normal_mode();
             }
 
-            close(fd1);
             free(s);
             free(tab);
-            free(souris);
             free(curseur);
             free(writing_buff.buff);
 
@@ -216,10 +215,8 @@ void normal_mode()
         {
             write_to_file(tab[1], writing_buff.buff);
 
-            close(fd1);
             free(s);
             free(tab);
-            free(souris);
             free(curseur);
             free(writing_buff.buff);
 
@@ -241,10 +238,8 @@ void normal_mode()
             normal_mode();
         }
 
-        close(fd1);
         free(s);
         free(tab);
-        free(souris);
         free(curseur);
         free(writing_buff.buff);
     }

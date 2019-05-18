@@ -1,17 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include <ctype.h>
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
 #include <unistd.h>
 
-#include "mice.h"
 #include "mode.h"
 #include "clone.h"
 #include "editor.h"
 #include "terminal.h"
+#include "mice.h"
+
 
 void disableRawMode()
 {
@@ -53,8 +57,7 @@ void editorDrawRows()
     //draws the line of tildes like vim
     int y;
 
-    for (y = 0; y < WIN_Y - 10; y++)
-    {
+    for (y = 0; y < WIN_Y-10; y++) {
         write(STDOUT_FILENO, "~\r\n", 3);
     }
 }
@@ -62,10 +65,9 @@ void editorDrawRows()
 void print_cursor()
 {
     sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
-    print_file(curseur, get_amount_lines(curseur));
 }
 
-void escapeSequence(char *buffer)
+void moveCursorBuf(char *buffer)
 {
     int i;
     char troisieme, k1;
@@ -105,8 +107,7 @@ void increment_cursor()
     {
         if (cursor.C_X < WIN_X)
             ++cursor.C_X;
-        else if (cursor.C_Y < WIN_Y)
-        {
+        else if (cursor.C_Y < WIN_Y) {
             ++cursor.C_Y;
             cursor.C_X = 1;
         }
@@ -117,8 +118,7 @@ void increment_cursor()
     {
         if (cursor.C_X < WIN_X)
             ++cursor.C_X;
-        else if (cursor.C_Y < WIN_Y)
-        {
+        else if (cursor.C_Y < WIN_Y) {
             ++cursor.C_Y;
             cursor.C_X = 1;
         }
@@ -137,15 +137,15 @@ void cursor_to_top_left()
 
 void cursor_to_bottom_left()
 {
-    write(STDOUT_FILENO, "\033[45;10f", 9);
+    write(STDOUT_FILENO, "\033[75;1f", 9);
     cursor.C_X = 1;
-    cursor.C_Y = WIN_Y - 5;
+    cursor.C_Y = 75;
 }
 
 //Monter d'une ligne dans un texte affiché
 void cursor_to_top(char* buffer)
 {
-    if(cursor.C_Y >= 1 && cursor.C_Y < WIN_Y && cursor.C_X >= 1 && cursor.C_X < WIN_X)
+    if(cursor.C_Y > 1 && cursor.C_Y < WIN_Y )
     {
         cursor.C_Y--;
         sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
@@ -167,7 +167,7 @@ void cursor_to_bottom(char* buffer)
 {
     //if(writing_buff.cur + WIN_Y <= writing_buff.len )
     //{
-        if (cursor.C_Y >= 1 && cursor.C_Y < WIN_Y - 1 && cursor.C_X >= 1 && cursor.C_X < WIN_X)
+        if (cursor.C_Y >= 1 && cursor.C_Y < WIN_Y )
         {
             cursor.C_Y++;
             sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
@@ -175,8 +175,7 @@ void cursor_to_bottom(char* buffer)
             print_file(buffer, get_amount_lines(buffer));
 
             writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-        } else
-        {
+        } else {
             writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
             sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
             print_file(buffer, get_amount_lines(buffer));
@@ -187,14 +186,13 @@ void cursor_to_bottom(char* buffer)
 //Se déplacer d'un caractère/d'une colonne à droite dans un texte affiché
 void cursor_to_right(char* buffer)
 {
-    //if(writing_buff.cur < writing_buff.len-1)
-    //{
+    if(writing_buff.cur < writing_buff.len-1)
+    {  
         if (cursor.C_X >= 1 && cursor.C_X < WIN_X)
         {
             cursor.C_X++;
             sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
             writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-
             print_file(buffer, get_amount_lines(buffer));
         }
         else
@@ -203,7 +201,7 @@ void cursor_to_right(char* buffer)
             sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
             print_file(buffer, get_amount_lines(buffer));
         }
-    //}
+    }
 }
 
 //Se déplacer d'un caractère/d'une colonne à gauche dans un texte affiché
@@ -232,15 +230,14 @@ void cursor_to_location_buf(unsigned int x, unsigned int y)
     {
         cursor.C_X = x;
         cursor.C_Y = y;
-	    sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+	   sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
         writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-        print_file(curseur, get_amount_lines(curseur));
+
     }
 	else
 	{
 		writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 		sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
-        print_file(curseur, get_amount_lines(curseur));
 	}
 }
 

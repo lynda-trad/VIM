@@ -1,19 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include <ctype.h>
+
 #include <unistd.h>
+
 #include <signal.h>
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
 #include <errno.h>
 
-#include "mice.h"
 #include "mode.h"
 #include "clone.h"
 #include "editor.h"
 #include "terminal.h"
+#include "mice.h"
 
 
 void handler()
@@ -36,7 +41,6 @@ int main(int argc, char **argv)
     //xterm -geometry 120x80
 
     curseur = malloc(sizeof(char)* 2048);
-    souris  = malloc(sizeof(char)* 2048);
 
     //ignores CTRL+C
     struct sigaction act;

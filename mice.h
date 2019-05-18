@@ -1,8 +1,6 @@
 #ifndef CLONE_MICE_H
 #define CLONE_MICE_H
 
-char *souris;
-
 typedef struct
 {
     unsigned int M_X;

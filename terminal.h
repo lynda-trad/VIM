@@ -4,12 +4,12 @@
 #include <termios.h>
 
 #define WIN_X 120
-#define WIN_Y 50
+#define WIN_Y 80
 
 typedef struct
 {
-    unsigned int C_X; // Colonnes--> Max 120
-    unsigned int C_Y; // Lignes--> Max 50
+    unsigned int C_X; // Colonnes--> Max 90
+    unsigned int C_Y; // Lignes--> Max 40
 } cursor_t;
 
 //cursor coordinates
@@ -27,7 +27,7 @@ void editorDrawRows();
 
 void print_cursor();
 
-void escapeSequence(char *buffer);
+void moveCursorBuf(char * buffer);
 
 void increment_cursor();
 
