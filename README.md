@@ -75,3 +75,5 @@ en compte, il faut se mettre sur un caractère pour écrire les caractères qui 
 - Ecriture dans l'éditeur de texte bloquée si on efface tous les caractères du fichier avec DEL (peut être un problème
 de memmove). Pas de solution trouvée, le seul moyen de se débloquer est d'effacer le " vide " avec backspace et delete
 et d'écrire jusqu'à que quelque chose s'affiche.
+
+- Le fichier mice ne recevait aucune écriture, nous ne pouvions donc pas verifier notre code et modifier le curseur.
