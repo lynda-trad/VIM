@@ -46,8 +46,7 @@ d'affichage du buffer, il faut passer en mode normal pour voir ce qu'est réelle
 
 - le curseur ne s'arrete pas en bout de ligne
 
-- Segfault : lorsque l'on veut descendre sur une ligne qui est vide; lorsque l'on veut effacer avec backspace un char
- alors qu'on est en haut a gauche (dans certains cas);
+- Segfault : lorsque l'on veut effacer avec backspace un char alors qu'on est en haut a gauche (dans certains cas);
 
 - Ecriture dans l'éditeur de texte bloquée si on efface tous les caractères du fichier avec DEL (peut être un problème
 de curseur)

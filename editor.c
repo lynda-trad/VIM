@@ -94,8 +94,8 @@ void add_character_file(char key)
 {
     //decallage des char dans le buffer
     writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-    unsigned int cx = cursor.C_X;
-    unsigned int cy = cursor.C_Y;
+    unsigned int cx  = cursor.C_X;
+    unsigned int cy  = cursor.C_Y;
 
     //incremente
     ++writing_buff.len;
@@ -132,7 +132,9 @@ void delete_character(char key)
             memmove(&writing_buff.buff[writing_buff.cur - 3], &writing_buff.buff[writing_buff.cur - 2],
                     writing_buff.len - (writing_buff.cur - 2));
 
-            writing_buff.buff[writing_buff.len]     = 0;
+            writing_buff.buff[writing_buff.len-2] = 0;
+            writing_buff.buff[writing_buff.len-1] = 0;
+            writing_buff.buff[writing_buff.len]   = 0;
             --writing_buff.len;
 
             fflush(stdout);
@@ -151,7 +153,7 @@ void delete_character(char key)
     if (key == '~')
     {
         writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-        if (writing_buff.cur <= writing_buff.len-1 && writing_buff.cur > 0)
+        if (writing_buff.cur <= writing_buff.len - 1 && writing_buff.cur > 0)
         {
             unsigned int cx = cursor.C_X;
             unsigned int cy = cursor.C_Y;
@@ -159,7 +161,9 @@ void delete_character(char key)
             memmove(&writing_buff.buff[writing_buff.cur - 2], &writing_buff.buff[writing_buff.cur - 1],
                     writing_buff.len - (writing_buff.cur - 2));
 
-            writing_buff.buff[writing_buff.len] = 0;
+            writing_buff.buff[writing_buff.len - 2] = 0;
+            writing_buff.buff[writing_buff.len - 1] = 0;
+            writing_buff.buff[writing_buff.len]     = 0;
 
             --writing_buff.len;
             clear_term();
@@ -263,7 +267,7 @@ unsigned int get_amount_characters_in_line(const char* buffer, unsigned int line
 //On récupère l'indice i du buffer à partir duquel buffer[i] se trouve au dernier caractère de la ligne line-1
     while (l != line)
     {
-	    while(buffer[i] != '\n')
+	    while(buffer[i] != '\n' && buffer[i])
 	    {
 			++i;
 	    }
