@@ -145,8 +145,8 @@ void delete_character(char key)
             memmove(&writing_buff.buff[writing_buff.cur - 3], &writing_buff.buff[writing_buff.cur - 2],
                     writing_buff.len - (writing_buff.cur - 2));
 
-            writing_buff.buff[writing_buff.len-2] = 0;
-            writing_buff.buff[writing_buff.len-1] = 0;
+            //writing_buff.buff[writing_buff.len-2] = 0;
+            //writing_buff.buff[writing_buff.len-1] = 0;
             writing_buff.buff[writing_buff.len]   = 0;
             --writing_buff.len;
 
@@ -174,8 +174,8 @@ void delete_character(char key)
             memmove(&writing_buff.buff[writing_buff.cur - 2], &writing_buff.buff[writing_buff.cur - 1],
                     writing_buff.len - (writing_buff.cur - 2));
 
-            writing_buff.buff[writing_buff.len - 2] = 0;
-            writing_buff.buff[writing_buff.len - 1] = 0;
+           //writing_buff.buff[writing_buff.len - 2] = 0;
+           //writing_buff.buff[writing_buff.len - 1] = 0;
             writing_buff.buff[writing_buff.len]     = 0;
 
             --writing_buff.len;
