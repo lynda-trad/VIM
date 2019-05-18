@@ -175,7 +175,8 @@ void cursor_to_bottom(char* buffer)
             print_file(buffer, get_amount_lines(buffer));
 
             writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-        } else {
+        } else
+        {
             writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
             sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
             print_file(buffer, get_amount_lines(buffer));

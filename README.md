@@ -1,6 +1,6 @@
 Projet 2019 - Clone de vim
 
-Sources : clone.c editor.c terminal.c mode.c clone.h editor.h terminal.h mode.h
+Sources : clone.c editor.c terminal.c mode.c mice.c clone.h editor.h terminal.h mode.h mice.h
 Executable : ./clone
 
 Membres du groupe :
@@ -43,8 +43,10 @@ conflits avec la détection des flèches;
 - presser backspace et delete plusieurs fois donnent parfois lieu à des problèmes
 d'affichage du buffer, il faut passer en mode normal pour voir ce qu'est réellement le buffer.
 
-- backspace : segfault lorsqu'on est en haut à gauche,
-pour effacer un caractere avec backspace il faut se mettre sur le caractère à sa droite.
+- le curseur ne s'arrete pas en bout de ligne
 
-- le curseur ne s'arrete pas en bout de ligne :
- apart lorsqu'on est sur une feuille blanche, sinon lorsque l'on veut descendre sur une ligne qui est vide.
+- Segfault : lorsque l'on veut descendre sur une ligne qui est vide; lorsque l'on veut effacer avec backspace un char
+ alors qu'on est en haut a gauche (dans certains cas);
+
+- Ecriture dans l'éditeur de texte bloquée si on efface tous les caractères du fichier avec DEL (peut être un problème
+de curseur)
