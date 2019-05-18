@@ -66,9 +66,6 @@ void read_mouse(int fd, char* buffer)
 // Affichage du curseur dans le buffer 
             print_mouse_cursor(buffer);
 
-// Colorier le texte/ curseur
-// 			sprintf(buffer, "\x1b[91m%s", acolorier);
-
             clear_term();
             editorDrawRows();
             cursor_to_top_left();
@@ -78,7 +75,6 @@ void read_mouse(int fd, char* buffer)
             sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
             print_file(curseur, get_amount_lines(curseur));
         }
-
     }
 }
 	

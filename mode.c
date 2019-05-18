@@ -19,6 +19,7 @@
 void choosing_mode()
 {
     //where you choose the mode
+    write(STDOUT_FILENO,"\n\r         CLONE         \n\r", 27);
     write(STDOUT_FILENO,"Press i to enter Insertion mode. Press TAB to enter Normal mode.\n\r", 68);
     write(STDOUT_FILENO,"\n\rIn Normal mode:\n\r\n\r :i = go back to Insertion mode\n\r :w = save to current opened file\n\r", 89);
     write(STDOUT_FILENO," :w <filename> = save to <filename>\n\r :q = quit clone\n\r :q! = quit without saving\n\r", 83);
