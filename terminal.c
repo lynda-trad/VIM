@@ -231,14 +231,15 @@ void cursor_to_location_buf(unsigned int x, unsigned int y)
     {
         cursor.C_X = x;
         cursor.C_Y = y;
-	   sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+	    sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
         writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-
+        print_file(curseur, get_amount_lines(curseur));
     }
 	else
 	{
 		writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
 		sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+        print_file(curseur, get_amount_lines(curseur));
 	}
 }
 

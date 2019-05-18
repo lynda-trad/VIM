@@ -40,7 +40,6 @@ void cmd_key_pressed_buf(char* buffer, char key)
             break;
 
         case 126: //maybe DEL ( == '~' )
-            if(writing_buff.cur != 0 && writing_buff.cur != 1)
                 delete_character(key);
             break;
 
@@ -160,7 +159,7 @@ void delete_character(char key)
             memmove(&writing_buff.buff[writing_buff.cur - 2], &writing_buff.buff[writing_buff.cur - 1],
                     writing_buff.len - (writing_buff.cur - 2));
 
-            //writing_buff.buff[writing_buff.len] = 0;
+            writing_buff.buff[writing_buff.len] = 0;
 
             --writing_buff.len;
             clear_term();
