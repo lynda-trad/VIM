@@ -73,8 +73,10 @@ void read_mouse(int fd, char* buffer)
             editorDrawRows();
             cursor_to_top_left();
             print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
-            sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
-            print_file(buffer, get_amount_lines(buffer));
+            cursor.C_X = mouse.M_X;
+            cursor.C_Y = mouse.M_Y;
+            sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+            print_file(curseur, get_amount_lines(curseur));
         }
 
     }
