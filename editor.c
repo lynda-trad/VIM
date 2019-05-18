@@ -123,7 +123,7 @@ void delete_character(char key)
     if (key == 127)
     {
         writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-        if ((writing_buff.cur <= writing_buff.len && writing_buff.cur != 0) || (cursor.C_X == 1 && cursor.C_X == 1))
+        if (writing_buff.cur <= writing_buff.len && writing_buff.cur != 0 && writing_buff.cur != 1 )
         {
             unsigned int cx = cursor.C_X;
             unsigned int cy = cursor.C_Y;
@@ -131,9 +131,7 @@ void delete_character(char key)
             memmove(&writing_buff.buff[writing_buff.cur - 3], &writing_buff.buff[writing_buff.cur - 2],
                     writing_buff.len - (writing_buff.cur - 2));
 
-            writing_buff.buff[writing_buff.len - 2] = 0;
-            writing_buff.buff[writing_buff.len - 1] = 0;
-            writing_buff.buff[writing_buff.len] = 0;
+            writing_buff.buff[writing_buff.len]     = 0;
             --writing_buff.len;
 
             fflush(stdout);
@@ -271,7 +269,7 @@ unsigned int get_amount_characters_in_line(const char* buffer, unsigned int line
 	    l++;
     }
 
-	while(buffer[i] != '\n')
+	while(buffer[i] != '\n' || buffer[i] != 0)
 	{
 		i++;
 		nb_char_line++;
@@ -281,7 +279,6 @@ unsigned int get_amount_characters_in_line(const char* buffer, unsigned int line
 	nb_char_line++;
 	
     return nb_char_line;
-    
 }
 
 unsigned int get_pos_cur_buffer(unsigned int x, unsigned int y)

@@ -14,20 +14,21 @@ Participation :
 Lynda : 
 
 - passage du mode canonique au mode non canonique
-- passage d'un mode à l'autre
+- passage d'un mode à l'autre ( Normal, Insertion )
 - gestion du mode normal (parsing et execution de la commande)
 - afficher le fichier en argument
-- detecter backspace et DEL
-- comportement du buffer et du curseur si on presse backspace et suppr
+- detection de backspace et DEL et leur comportement sur le buffer et le curseur
 - écrire sur une feuille blanche
 - se déplacer dans un texte et le modifier
+- poll pour manipuler fleches et souris en même temps
+- modifications dans les fonctions impliquant le curseur
 
 Nadeesha :
 
 - détecter quelle flèche a été pressée
-- fonctions pour bouger le curseur dans un fichier en mode Insertion 
-- fonctions pour avoir la position courante ou le nombre de caractères dans une ligne du buffer.
 - afficher le curseur
+- fonctions pour bouger le curseur selon les flèches
+- fonctions pour avoir la position courante ou le nombre de caractères dans une ligne du buffer.
 - début de la mise en place du curseur de la souris
 
 

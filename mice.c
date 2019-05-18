@@ -71,7 +71,9 @@ void read_mouse(int fd, char* buffer)
             clear_term();
             editorDrawRows();
             cursor_to_top_left();
-            print_file(writing_buff.buff, writing_buff.len);
+            print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+            sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+            print_file(buffer, get_amount_lines(buffer));
         }
 
     }

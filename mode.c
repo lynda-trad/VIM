@@ -14,11 +14,11 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include "mice.h"
 #include "mode.h"
 #include "clone.h"
 #include "editor.h"
 #include "terminal.h"
-#include "mice.h"
 
 void choosing_mode()
 {
@@ -61,7 +61,7 @@ void insertion_mode()
     //writes from STDIN_FILENO
     enableRawMode();
     cursor_to_top_left();
-    print_file(writing_buff.buff, writing_buff.len);
+    print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
     cursor_to_top_left();
 
     const char *pDevice = "/dev/input/mice";
@@ -97,7 +97,7 @@ void insertion_mode()
                         cmd_key_pressed_buf(curseur, key);
                     }
                     else if(i == 1)
-				        read_mouse(fd1, curseur);
+				        read_mouse(fd1, souris);
                 }
                 
 			    if(pfds[i].revents & POLLHUP) exit(0);
@@ -153,6 +153,7 @@ void normal_mode()
             close(fd1);
             free(s);
             free(tab);
+            free(souris);
             free(curseur);
             free(writing_buff.buff);
             printf("EXITING\n");
@@ -177,6 +178,7 @@ void normal_mode()
                 close(fd1);
                 free(s);
                 free(tab);
+                free(souris);
                 free(curseur);
                 free(writing_buff.buff);
                 printf("EXITING\n");
@@ -203,6 +205,7 @@ void normal_mode()
             close(fd1);
             free(s);
             free(tab);
+            free(souris);
             free(curseur);
             free(writing_buff.buff);
 
@@ -218,6 +221,7 @@ void normal_mode()
             close(fd1);
             free(s);
             free(tab);
+            free(souris);
             free(curseur);
             free(writing_buff.buff);
 
@@ -242,6 +246,7 @@ void normal_mode()
         close(fd1);
         free(s);
         free(tab);
+        free(souris);
         free(curseur);
         free(writing_buff.buff);
     }
