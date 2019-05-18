@@ -1,23 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <ctype.h>
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
 #include <unistd.h>
-
-//window
 #include <sys/ioctl.h>
 
+#include "mice.h"
 #include "mode.h"
 #include "clone.h"
 #include "editor.h"
 #include "terminal.h"
-#include "mice.h"
 
 
 void initEditor()

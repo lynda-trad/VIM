@@ -6,15 +6,16 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include "mice.h"
 #include "mode.h"
 #include "clone.h"
 #include "editor.h"
 #include "terminal.h"
-#include "mice.h"
 
 void print_mouse_cursor(char * buffer)
 {
     sprintf(buffer, "\x1b[%d;%dH", mouse.M_Y, mouse.M_X);
+    print_file(buffer, get_amount_lines(buffer));
 }
 
 void initMouse()

@@ -1,21 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <ctype.h>
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
 #include <unistd.h>
 
+#include "mice.h"
 #include "mode.h"
 #include "clone.h"
 #include "editor.h"
 #include "terminal.h"
-#include "mice.h"
-
 
 void disableRawMode()
 {
@@ -57,7 +53,8 @@ void editorDrawRows()
     //draws the line of tildes like vim
     int y;
 
-    for (y = 0; y < WIN_Y-10; y++) {
+    for (y = 0; y < WIN_Y - 10; y++)
+    {
         write(STDOUT_FILENO, "~\r\n", 3);
     }
 }
@@ -108,7 +105,8 @@ void increment_cursor()
     {
         if (cursor.C_X < WIN_X)
             ++cursor.C_X;
-        else if (cursor.C_Y < WIN_Y) {
+        else if (cursor.C_Y < WIN_Y)
+        {
             ++cursor.C_Y;
             cursor.C_X = 1;
         }
@@ -119,7 +117,8 @@ void increment_cursor()
     {
         if (cursor.C_X < WIN_X)
             ++cursor.C_X;
-        else if (cursor.C_Y < WIN_Y) {
+        else if (cursor.C_Y < WIN_Y)
+        {
             ++cursor.C_Y;
             cursor.C_X = 1;
         }
