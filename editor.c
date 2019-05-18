@@ -141,7 +141,7 @@ void delete_character(char key)
             cursor_to_top_left();
             print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
 
-            cursor_to_location_buf(cx, cy);
+            cursor_to_location_buf(cx-1, cy);
             print_cursor();
         }
     }

@@ -65,6 +65,7 @@ void editorDrawRows()
 void print_cursor()
 {
     sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+    print_file(curseur, get_amount_lines(curseur));
 }
 
 void moveCursorBuf(char *buffer)
