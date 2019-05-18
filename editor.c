@@ -40,12 +40,12 @@ void cmd_key_pressed_buf(char* buffer, char key)
             break;
 
         case 126: //maybe DEL ( == '~' )
-            if(get_pos_cur_buffer(cursor.C_X, cursor.C_Y) != 0)
+            if(writing_buff.cur != 0 && writing_buff.cur != 1)
                 delete_character(key);
             break;
 
         case 127:
-            if(get_pos_cur_buffer(cursor.C_X, cursor.C_Y) != 0)
+            if(writing_buff.cur != 0 && writing_buff.cur != 1)
                 delete_character(key);
         break;
 
