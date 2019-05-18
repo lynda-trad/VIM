@@ -87,6 +87,7 @@ void add_character(char key)
     ++writing_buff.cur;
     ++writing_buff.len;
     increment_cursor();
+    //print_cursor();
 }
 
 void add_character_file(char key)
@@ -99,7 +100,7 @@ void add_character_file(char key)
     //incremente
     ++writing_buff.len;
 
-    memmove(&writing_buff.buff[writing_buff.cur-1], &writing_buff.buff[writing_buff.cur-2], writing_buff.len - (writing_buff.cur-2));
+    memmove(&writing_buff.buff[writing_buff.cur], &writing_buff.buff[writing_buff.cur-1], writing_buff.len - (writing_buff.cur-1));
 
     //on met le nouveau char a la position
     writing_buff.buff[writing_buff.cur-1] = key;
@@ -242,9 +243,9 @@ unsigned int get_line(const char* buffer, unsigned int pos)
     {
 		if(buffer[i] == '\n')
 		{
-			line++;
+			++line;
 		}
-		i++;
+		++i;
     }
 	return line;
 }
@@ -264,20 +265,20 @@ unsigned int get_amount_characters_in_line(const char* buffer, unsigned int line
     {
 	    while(buffer[i] != '\n')
 	    {
-			i++;
+			++i;
 	    }
-		i++;
-	    l++;
+		++i;
+	    ++l;
     }
 
 	while(buffer[i] != '\n' || buffer[i] != 0)
 	{
-		i++;
-		nb_char_line++;
+		++i;
+		++nb_char_line;
 	}
 
 //Pour le dernier caractère'\n'
-	nb_char_line++;
+	++nb_char_line;
 	
     return nb_char_line;
 }
@@ -287,7 +288,7 @@ unsigned int get_pos_cur_buffer(unsigned int x, unsigned int y)
 // Indice position courante buffer = somme du nombre de caractère par ligne  + nb de colonnes de la dernière ligne (cursor.C_X) +1
 	unsigned int somme;
 	somme = 0;
-	for(unsigned int i = 1; i < y; i++)
+	for(unsigned int i = 1; i < y; ++i)
 	{
 		somme = somme + get_amount_characters_in_line(writing_buff.buff,i);
 	}

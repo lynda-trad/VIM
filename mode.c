@@ -69,7 +69,7 @@ void insertion_mode()
 //  Open Mouse & STDIN
 
     fd0 = dup(STDIN_FILENO);
-    fd1 = open(pDevice, O_RDWR | O_NONBLOCK);
+    fd1 = open(pDevice, O_RDONLY);
 
     if (fd0 == -1 || fd1 == -1)
         die("open failed");
