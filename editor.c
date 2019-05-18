@@ -271,7 +271,7 @@ unsigned int get_amount_characters_in_line(const char* buffer, unsigned int line
 	    ++l;
     }
 
-	while(buffer[i] != '\n' || buffer[i] != 0)
+	while(buffer[i] != '\n' && buffer[i] != 0)
 	{
 		++i;
 		++nb_char_line;
