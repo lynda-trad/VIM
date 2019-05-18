@@ -55,17 +55,20 @@ le curseur de la souris ne s'affiche pas non plus.
 Difficultés rencontrées :
 
 - Le passage du mode normal au mode insertion une fois la ligne de commande commencée.
-    La solution trouvée : une commande :i pour passer en mode insertion si la commande a commencé.
+    La solution trouvée est une commande :i pour passer en mode insertion si la commande a commencé.
+    Si elle n'a pas commencé, on peut cliquer sur i.
 
 - Le passage du mode insertion au mode normal. On doit presser ECHAP ( c == 27 ), cela provoque des
 conflits avec la détection des flèches qui sont des escape sequence.
-    La solution trouvée : ECHAP est remplacé par TAB.
+    La solution trouvée : ECHAP est remplacé par TAB ( c == 9 ).
 
 - Presser backspace et delete plusieurs fois donnent parfois lieu à des problèmes
 d'affichage du buffer, il faut passer en mode normal pour voir ce qu'est réellement le buffer.
-Une fois revenu en mode insertion on peut se déplacer et modifier le fichier.
+Une fois revenu en mode insertion, on peut se déplacer et modifier le fichier normalement.
 
-- Le curseur ne s'arrete pas en bout de ligne, il peut flotter dans le vide.
+- Le curseur ne s'arrete pas en bout de ligne, il peut flotter dans le vide. L'écriture dans le vide n'est pas prise
+en compte, il faut se mettre sur un caractère pour écrire les caractères qui le suivent.
 
 - Ecriture dans l'éditeur de texte bloquée si on efface tous les caractères du fichier avec DEL (peut être un problème
-de curseur)
+de memmove). Pas de solution trouvée, le seul moyen de se débloquer est d'effacer le " vide " avec backspace et delete
+et d'écrire jusqu'à que quelque chose s'affiche.

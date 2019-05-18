@@ -63,8 +63,9 @@ void read_mouse(int fd, char* buffer)
 //          printf(" x=%d, y=%d, left=%d, middle=%d, right=%d\n", x, y, left, middle, right);
 // 		 	printf("M.x=%d M.y=%d", mouse.C_X, mouse.C_Y); // coordonnées de la position actuelle de la souris
 
-// Affichage du curseur dans le buffer 
+// Affichage du curseur dans le buffer
             print_mouse_cursor(buffer);
+            print_mouse_cursor(curseur);
 
             clear_term();
             editorDrawRows();
@@ -77,4 +78,3 @@ void read_mouse(int fd, char* buffer)
         }
     }
 }
-	

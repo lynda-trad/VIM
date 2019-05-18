@@ -167,7 +167,7 @@ void cursor_to_bottom(char* buffer)
 {
     //if(writing_buff.cur + WIN_Y <= writing_buff.len )
     //{
-        if (cursor.C_Y >= 1 && cursor.C_Y < WIN_Y && cursor.C_X >= 1 && cursor.C_X < WIN_X)
+        if (cursor.C_Y >= 1 && cursor.C_Y < WIN_Y - 1 && cursor.C_X >= 1 && cursor.C_X < WIN_X)
         {
             cursor.C_Y++;
             sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
