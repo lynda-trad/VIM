@@ -31,7 +31,7 @@ void cmd_key_pressed_buf(char* buffer, char key)
         break;
 
         case 27:
-            moveCursorBuf(buffer);
+            escapeSequence(buffer);
             break;
 
         case 126: // DEL ( == '~' )

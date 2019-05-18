@@ -65,7 +65,7 @@ void print_cursor()
     print_file(curseur, get_amount_lines(curseur));
 }
 
-void moveCursorBuf(char *buffer)
+void escapeSequence(char *buffer)
 {
     int i;
     char troisieme, k1;

@@ -27,7 +27,7 @@ void editorDrawRows();
 
 void print_cursor();
 
-void moveCursorBuf(char * buffer);
+void escapeSequence(char *buffer);
 
 void increment_cursor();
 
