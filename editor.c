@@ -40,14 +40,26 @@ void cmd_key_pressed_buf(char* buffer, char key)
             break;
 
         case 126: //maybe DEL ( == '~' )
-            if(get_pos_cur_buffer(cursor.C_X, cursor.C_Y) != 0)
                 delete_character(key);
             break;
 
         case 127:
-            if(get_pos_cur_buffer(cursor.C_X, cursor.C_Y) != 0)
-                delete_character(key);
-        break;
+            if(cursor.C_X == 1)
+            {
+                unsigned int c;
+                c = cursor.C_Y;
+                if (c != 1)
+                    delete_character(key);
+            }
+            else
+            if(cursor.C_X >= 2)
+            {
+                unsigned int c;
+                c = ((cursor.C_X -1)* WIN_Y + cursor.C_X) - 1;
+                if (c != 0 && c != 1)
+                    delete_character(key);
+            }
+            break;
 
         default :
             if (iscntrl(key) && key != '\r')
@@ -132,8 +144,8 @@ void delete_character(char key)
             memmove(&writing_buff.buff[writing_buff.cur - 3], &writing_buff.buff[writing_buff.cur - 2],
                     writing_buff.len - (writing_buff.cur - 2));
 
-            writing_buff.buff[writing_buff.len - 2] = 0;
-            writing_buff.buff[writing_buff.len - 1] = 0;
+            //writing_buff.buff[writing_buff.len - 2] = 0;
+            //writing_buff.buff[writing_buff.len - 1] = 0;
             writing_buff.buff[writing_buff.len] = 0;
             --writing_buff.len;
 
@@ -142,8 +154,9 @@ void delete_character(char key)
             clear_term();
             editorDrawRows();
             cursor_to_top_left();
-            cursor_to_location_buf(cx, cy);
             print_file(writing_buff.buff, get_amount_lines(writing_buff.buff));
+            cursor_to_location_buf(cx-1, cy);
+            print_cursor();
         }
     }
     //delete
@@ -158,7 +171,8 @@ void delete_character(char key)
             memmove(&writing_buff.buff[writing_buff.cur - 2], &writing_buff.buff[writing_buff.cur - 1],
                     writing_buff.len - (writing_buff.cur - 2));
 
-            //writing_buff.buff[writing_buff.len] = 0;
+
+            writing_buff.buff[writing_buff.len] = 0;
 
             --writing_buff.len;
             clear_term();
@@ -233,20 +247,20 @@ unsigned int get_amount_lines(const char *s)
 
 unsigned int get_line(const char* buffer, unsigned int pos)
 {
-	unsigned int i;
-	unsigned int line;
-	i = 0;
-	line = 1;
-	
-	while (i != pos)
+    unsigned int i;
+    unsigned int line;
+    i = 0;
+    line = 1;
+
+    while (i != pos)
     {
-		if(buffer[i] == '\n')
-		{
-			line++;
-		}
-		i++;
+        if(buffer[i] == '\n')
+        {
+            ++line;
+        }
+        ++i;
     }
-	return line;
+    return line;
 }
 
 unsigned int get_amount_characters_in_line(const char* buffer, unsigned int line)
@@ -262,40 +276,42 @@ unsigned int get_amount_characters_in_line(const char* buffer, unsigned int line
 //On récupère l'indice i du buffer à partir duquel buffer[i] se trouve au dernier caractère de la ligne line-1
     while (l != line)
     {
-	    while(buffer[i] != '\n')
-	    {
-			i++;
-	    }
-		i++;
-	    l++;
+        while(buffer[i] != '\n' && buffer[i])
+        {
+            ++i;
+        }
+        ++i;
+        ++l;
     }
 
-	while(buffer[i] != '\n')
-	{
-		i++;
-		nb_char_line++;
-	}
+    while(buffer[i] != '\n' && buffer[i] != 0)
+    {
+        ++i;
+        ++nb_char_line;
+    }
 
 //Pour le dernier caractère'\n'
-	nb_char_line++;
-	
+    ++nb_char_line;
+
     return nb_char_line;
-    
 }
+
+
 
 unsigned int get_pos_cur_buffer(unsigned int x, unsigned int y)
 {
 // Indice position courante buffer = somme du nombre de caractère par ligne  + nb de colonnes de la dernière ligne (cursor.C_X) +1
-	unsigned int somme;
-	somme = 0;
-	for(unsigned int i = 1; i < y; i++)
-	{
-		somme = somme + get_amount_characters_in_line(writing_buff.buff,i);
-	}
-	somme = somme + x + 1;
-	
-	return somme;
+    unsigned int somme;
+    somme = 0;
+    for(unsigned int i = 1; i < y; ++i)
+    {
+        somme = somme + get_amount_characters_in_line(writing_buff.buff,i);
+    }
+    somme = somme + x + 1;
+
+    return somme;
 }
+
 
 void print_file(const char *s, unsigned int n)
 {

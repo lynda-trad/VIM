@@ -65,6 +65,7 @@ void editorDrawRows()
 void print_cursor()
 {
     sprintf(curseur, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+    print_file(curseur, get_amount_lines(curseur));
 }
 
 void moveCursorBuf(char *buffer)
@@ -137,9 +138,9 @@ void cursor_to_top_left()
 
 void cursor_to_bottom_left()
 {
-    write(STDOUT_FILENO, "\033[75;1f", 9);
+    write(STDOUT_FILENO, "\033[45;1f", 9);
     cursor.C_X = 1;
-    cursor.C_Y = 75;
+    cursor.C_Y = 45;
 }
 
 //Monter d'une ligne dans un texte affiché
@@ -166,20 +167,19 @@ void cursor_to_top(char* buffer)
 void cursor_to_bottom(char* buffer)
 {
     //if(writing_buff.cur + WIN_Y <= writing_buff.len )
-    //{
-        if (cursor.C_Y >= 1 && cursor.C_Y < WIN_Y )
-        {
-            cursor.C_Y++;
-            sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+    if (cursor.C_Y >= 1 && cursor.C_Y < WIN_Y - 1 && cursor.C_X >= 1 && cursor.C_X < WIN_X)
+    {
+        cursor.C_Y++;
+        sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
 
-            print_file(buffer, get_amount_lines(buffer));
+        print_file(buffer, get_amount_lines(buffer));
 
-            writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-        } else {
-            writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
-            sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
-            print_file(buffer, get_amount_lines(buffer));
-        }
+        writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+    } else {
+        writing_buff.cur = get_pos_cur_buffer(cursor.C_X, cursor.C_Y);
+        sprintf(buffer, "\x1b[%d;%dH", cursor.C_Y, cursor.C_X);
+        print_file(buffer, get_amount_lines(buffer));
+    }
     //}
 }
 
